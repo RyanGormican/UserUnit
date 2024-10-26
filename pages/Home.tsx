@@ -4,10 +4,10 @@ import '/src/app/globals.css';
 
 export default function Home() {
   const [containerWidth, setContainerWidth] = useState(50);
-  const [containerHeight, setContainerHeight] = useState(87); 
+  const [containerHeight, setContainerHeight] = useState(87);
   const [isDraggingWidth, setIsDraggingWidth] = useState(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState(false);
-  const [currentMode, setCurrentMode] = useState('Container'); 
+  const [currentMode, setCurrentMode] = useState('Container');
   const [content, setContent] = useState('Resizable Container');
 
   const handleMouseDownWidth = () => {
@@ -18,10 +18,10 @@ export default function Home() {
     setIsDraggingHeight(true);
   };
 
-  const handleMouseMove = (e) => {
+  const handleMouseMove = (e: MouseEvent) => {
     // Resize Width
     if (isDraggingWidth) {
-      const newWidth = (e.clientX / window.innerWidth) * 100; 
+      const newWidth = (e.clientX / window.innerWidth) * 100;
       if (newWidth >= 6 && newWidth <= 99) {
         setContainerWidth(newWidth);
       }
@@ -29,8 +29,8 @@ export default function Home() {
 
     // Resize Height
     if (isDraggingHeight) {
-      const newHeight = (e.clientY / window.innerHeight) * 100; 
-      if (newHeight >= 6 && newHeight <= 87) { 
+      const newHeight = (e.clientY / window.innerHeight) * 100;
+      if (newHeight >= 6 && newHeight <= 87) {
         setContainerHeight(newHeight);
       }
     }
@@ -53,12 +53,12 @@ export default function Home() {
   }, [isDraggingWidth, isDraggingHeight]);
 
   // Function to set current mode
-  const toggleMode = (mode) => {
+  const toggleMode = (mode: string) => {
     setCurrentMode(mode);
   };
 
   // Function to handle input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setContent(e.target.value);
   };
 
@@ -76,31 +76,29 @@ export default function Home() {
             <Icon icon="teenyicons:computer-outline" color="#199c35" width="60" />
           </a>
         </span>
-        <div className="title">
-          UserUnit
-        </div>
+        <div className="title">UserUnit</div>
         <hr className="divider" />
         <div className="buttons flex">
-          <Icon 
-            icon="icon-park-outline:page" 
-            width="40" 
-            onClick={() => toggleMode('Container')} 
+          <Icon
+            icon="icon-park-outline:page"
+            width="40"
+            onClick={() => toggleMode('Container')}
           />
-          {/*
+          {/* Uncomment if needed
           <Icon 
             icon="fluent-mdl2:page-list" 
             width="40" 
             onClick={() => toggleMode('Modules')} 
           />
           */}
-          <Icon 
-            icon="subway:write" 
-            width="40" 
-            onClick={() => toggleMode('Content')} 
+          <Icon
+            icon="subway:write"
+            width="40"
+            onClick={() => toggleMode('Content')}
           />
         </div>
         <hr className="divider" />
-        
+
         {/* Container Mode */}
         {currentMode === 'Container' && (
           <div style={{ display: 'flex', height: '87vh' }}>
@@ -115,9 +113,9 @@ export default function Home() {
               {content}
               <div
                 style={{
-                  width: '2px', 
+                  width: '2px',
                   height: '100%',
-                  backgroundColor: '#000', 
+                  backgroundColor: '#000',
                   position: 'absolute',
                   right: '0',
                   top: '0',
@@ -128,8 +126,8 @@ export default function Home() {
               <div
                 style={{
                   width: '100%',
-                  height: '2px', 
-                  backgroundColor: '#000', 
+                  height: '2px',
+                  backgroundColor: '#000',
                   position: 'absolute',
                   bottom: '0',
                   left: '0',
@@ -145,7 +143,6 @@ export default function Home() {
         {currentMode === 'Modules' && (
           <div style={{ height: '87vh', backgroundColor: '#e0e0e0', padding: '20px' }}>
             <h2>Modules</h2>
-      
           </div>
         )}
 
@@ -153,11 +150,11 @@ export default function Home() {
         {currentMode === 'Content' && (
           <div style={{ height: '87vh', backgroundColor: '#e0e0e0', padding: '20px' }}>
             <h2>Edit Container Text</h2>
-            <input 
-              type="text" 
-              value={content} 
-              onChange={handleInputChange} 
-              style={{ width: '100%', padding: '10px' }} 
+            <input
+              type="text"
+              value={content}
+              onChange={handleInputChange}
+              style={{ width: '100%', padding: '10px' }}
             />
           </div>
         )}
