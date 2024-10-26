@@ -30,7 +30,8 @@ body {
 }
 .title{
     font-size:50px;
-    text-align:center;
+    text-align:left;
+    padding-left:10%;
 }
 *{
     font-family: Jost, sans-serif;
@@ -39,4 +40,7 @@ body {
   border: none;
   height: 3.5px;
   background-color: black;
+}
+.buttons {
+    min-height:4vh;
 }
