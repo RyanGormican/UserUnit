@@ -9,13 +9,43 @@ export default function Home() {
   const [isDraggingHeight, setIsDraggingHeight] = useState(false);
   const [currentMode, setCurrentMode] = useState('Container');
   const [content, setContent] = useState('Resizable Container');
+  const [isCompact, setIsCompact] = useState(false);
+  const [userData, setUserData] = useState({
+    template: [],
+    content: []
+  });
+
+  // Load user data from local storage on component mount
+  useEffect(() => {
+    const storedData = localStorage.getItem('Userunitdata');
+    if (storedData) {
+      setUserData(JSON.parse(storedData));
+    } else {
+      // Initialize with default values
+      const initialData = {
+        template: [{ width: containerWidth, height: containerHeight }], // Default template
+        content: [content] // Default content list
+      };
+      setUserData(initialData);
+      localStorage.setItem('Userunitdata', JSON.stringify(initialData));
+    }
+  }, []);
+
+  // Update local storage whenever userData changes
+  useEffect(() => {
+    localStorage.setItem('Userunitdata', JSON.stringify(userData));
+  }, [userData]);
 
   const handleMouseDownWidth = () => {
-    setIsDraggingWidth(true);
+    if (isCompact) {
+      setIsDraggingWidth(true);
+    }
   };
 
   const handleMouseDownHeight = () => {
-    setIsDraggingHeight(true);
+    if (isCompact) {
+      setIsDraggingHeight(true);
+    }
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -24,6 +54,11 @@ export default function Home() {
       const newWidth = (e.clientX / window.innerWidth) * 100;
       if (newWidth >= 6 && newWidth <= 99) {
         setContainerWidth(newWidth);
+        // Update the template in userData
+        setUserData(prevState => ({
+          ...prevState,
+          template: [{ width: newWidth, height: containerHeight }] // Update with new width
+        }));
       }
     }
 
@@ -32,6 +67,11 @@ export default function Home() {
       const newHeight = (e.clientY / window.innerHeight) * 100;
       if (newHeight >= 6 && newHeight <= 87) {
         setContainerHeight(newHeight);
+        // Update the template in userData
+        setUserData(prevState => ({
+          ...prevState,
+          template: [{ width: containerWidth, height: newHeight }] // Update with new height
+        }));
       }
     }
   };
@@ -52,14 +92,23 @@ export default function Home() {
     };
   }, [isDraggingWidth, isDraggingHeight]);
 
-  // Function to set current mode
+  const toggleCompactMode = () => {
+    setIsCompact(!isCompact);
+  };
+
   const toggleMode = (mode: string) => {
     setCurrentMode(mode);
   };
 
-  // Function to handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setContent(e.target.value);
+    const newContent = e.target.value;
+    setContent(newContent);
+    
+    // Update content in userData
+    setUserData(prevState => ({
+      ...prevState,
+      content: [newContent] 
+    }));
   };
 
   return (
@@ -84,17 +133,15 @@ export default function Home() {
             width="40"
             onClick={() => toggleMode('Container')}
           />
-          {/* Uncomment if needed
-          <Icon 
-            icon="fluent-mdl2:page-list" 
-            width="40" 
-            onClick={() => toggleMode('Modules')} 
-          />
-          */}
           <Icon
             icon="subway:write"
             width="40"
             onClick={() => toggleMode('Content')}
+          />
+          <Icon
+            icon={isCompact ? 'ph:arrow-fat-up-fill' : 'ph:arrow-fat-up-light'}
+            width="40"
+            onClick={toggleCompactMode}
           />
         </div>
         <hr className="divider" />
@@ -104,37 +151,46 @@ export default function Home() {
           <div style={{ display: 'flex', height: '87vh' }}>
             <div
               style={{
-                width: `${containerWidth}vw`,
-                height: `${containerHeight}vh`,
+                 width: `${userData.template[0]?.width}vw`, 
+                height: `${userData.template[0]?.height}vh`,
                 backgroundColor: '#f0f0f0',
                 position: 'relative',
+                opacity: isCompact ? 1 : 0.6,
               }}
             >
-              {content}
-              <div
-                style={{
-                  width: '2px',
-                  height: '100%',
-                  backgroundColor: '#000',
-                  position: 'absolute',
-                  right: '0',
-                  top: '0',
-                  cursor: 'ew-resize',
-                }}
-                onMouseDown={handleMouseDownWidth}
-              />
-              <div
-                style={{
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: '#000',
-                  position: 'absolute',
-                  bottom: '0',
-                  left: '0',
-                  cursor: 'ns-resize',
-                }}
-                onMouseDown={handleMouseDownHeight}
-              />
+              {userData.content[0]} 
+
+              {/* Drag Handles */}
+              {isCompact ? (
+                <>
+                  <div
+                    style={{
+                      width: '2px',
+                      height: '100%',
+                      backgroundColor: '#000',
+                      position: 'absolute',
+                      right: '50%',
+                      top: '0',
+                      cursor: 'ew-resize',
+                      transform: 'translateX(50%)',
+                    }}
+                    onMouseDown={handleMouseDownWidth}
+                  />
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '2px',
+                      backgroundColor: '#000',
+                      position: 'absolute',
+                      bottom: '50%',
+                      left: '0',
+                      cursor: 'ns-resize',
+                      transform: 'translateY(50%)',
+                    }}
+                    onMouseDown={handleMouseDownHeight}
+                  />
+                </>
+              ) : null}
             </div>
           </div>
         )}
