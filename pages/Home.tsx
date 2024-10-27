@@ -189,8 +189,8 @@ export default function Home() {
               <div
                 key={template.id}
                 style={{
-                  width: `${template.width}vw`,
-                  height: `${template.height}vh`,
+                  width: `${template.containers[0].width}vw`,
+                  height: `${template.containers[0].height}vh`,
                   backgroundColor: '#f0f0f0',
                   position: 'relative',
                   opacity: isEdit ? 1 : 0.6,
