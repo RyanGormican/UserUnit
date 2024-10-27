@@ -185,57 +185,64 @@ export default function Home() {
           backgroundColor: '#f0f0f0',
           position: 'relative',
           opacity: isEdit ? 1 : 0.6,
+          overflowY: 'auto',
+          margin: 0 
         }}
       >
+        {/* Drag Handles */}
+        {isEdit && (
+          <>
+            <div
+              style={{
+                width: '2px',
+                height: '100%',
+                backgroundColor: '#000',
+                position: 'absolute',
+                right: '50%',
+                top: '0',
+                cursor: 'ew-resize',
+                transform: 'translateX(50%)',
+                zIndex: 10 
+              }}
+              onMouseDown={handleMouseDownWidth}
+            />
+            <div
+              style={{
+                width: '100%',
+                height: '2px',
+                backgroundColor: '#000',
+                position: 'absolute',
+                bottom: '50%',
+                left: '0',
+                cursor: 'ns-resize',
+                transform: 'translateY(50%)',
+                zIndex: 10 
+              }}
+              onMouseDown={handleMouseDownHeight}
+            />
+          </>
+        )}
+
+        {/* Content Display */}
         {template.containers?.map(container => {
           const contentItem = userData.content.find(content => content.id === container.contentId);
-          
-          // Debug: Log the current container and contentItem
-          console.log('Container:', container);
-          console.log('Content Item:', contentItem);
 
           return (
             <div key={container.id} style={{ padding: '10px' }}>
-              {/* Show content text or a placeholder */}
-              {contentItem ? contentItem.text : 'No content available'}
-
-              {/* Drag Handles */}
-              {isEdit && (
-                <>
-                  <div
-                    style={{
-                      width: '2px',
-                      height: '100%',
-                      backgroundColor: '#000',
-                      position: 'absolute',
-                      right: '50%',
-                      top: '0',
-                      cursor: 'ew-resize',
-                      transform: 'translateX(50%)',
-                    }}
-                    onMouseDown={handleMouseDownWidth}
-                  />
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '2px',
-                      backgroundColor: '#000',
-                      position: 'absolute',
-                      bottom: '50%',
-                      left: '0',
-                      cursor: 'ns-resize',
-                      transform: 'translateY(50%)',
-                    }}
-                    onMouseDown={handleMouseDownHeight}
-                  />
-                </>
-              )}
               {/* Dropdown to select content */}
               {isEdit && (
                 <select
                   value={container.contentId}
                   onChange={(e) => handleContentIdChange(container.id, Number(e.target.value))}
-                  style={{ width: '100%', padding: '10px', marginTop: '5px' }}
+                  style={{
+                    width: '25%',
+                    marginTop: '5px',
+                    position: 'absolute', 
+                    zIndex: 10, 
+                       top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)', 
+                  }}
                 >
                   {userData.content.map(content => (
                     <option key={content.id} value={content.id}>
@@ -244,6 +251,9 @@ export default function Home() {
                   ))}
                 </select>
               )}
+              
+              {/* Show content text or a placeholder */}
+              <p>{contentItem ? contentItem.text : 'No content available'}</p>
             </div>
           );
         })}
@@ -251,6 +261,7 @@ export default function Home() {
     ))}
   </div>
 )}
+
 
         {/* Content Mode */}
         {currentMode === 'Content' && (
@@ -260,7 +271,7 @@ export default function Home() {
               <div key={contentItem.id} style={{ marginBottom: '10px' }}>
                 <input
                   type="text"
-                  value={contentItem.title} // Edit title
+                  value={contentItem.title}
                   onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
                   style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
                   placeholder="Title"
