@@ -8,8 +8,7 @@ export default function Home() {
   const [isDraggingWidth, setIsDraggingWidth] = useState(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState(false);
   const [currentMode, setCurrentMode] = useState('Container');
-  const [content, setContent] = useState('Resizable Container');
-  const [isCompact, setIsCompact] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [userData, setUserData] = useState({
     template: [],
     content: []
@@ -23,8 +22,19 @@ export default function Home() {
     } else {
       // Initialize with default values
       const initialData = {
-        template: [{ width: containerWidth, height: containerHeight }], // Default template
-        content: [content] // Default content list
+        template: [
+          {
+            id: 1,
+            containers: [
+              { id: 1, title: 'Sample', contentId: 1, width: containerWidth, height: containerHeight },
+            ]
+          },
+        ],
+        content: [
+          { id: 1, title: 'A', text: 'Sample Text 1' },
+          { id: 2, title: 'B', text: 'Sample Text 2' },
+          { id: 3, title: 'C', text: 'Sample Text 3' }
+        ]
       };
       setUserData(initialData);
       localStorage.setItem('Userunitdata', JSON.stringify(initialData));
@@ -37,13 +47,13 @@ export default function Home() {
   }, [userData]);
 
   const handleMouseDownWidth = () => {
-    if (isCompact) {
+    if (isEdit) {
       setIsDraggingWidth(true);
     }
   };
 
   const handleMouseDownHeight = () => {
-    if (isCompact) {
+    if (isEdit) {
       setIsDraggingHeight(true);
     }
   };
@@ -54,10 +64,12 @@ export default function Home() {
       const newWidth = (e.clientX / window.innerWidth) * 100;
       if (newWidth >= 6 && newWidth <= 99) {
         setContainerWidth(newWidth);
-        // Update the template in userData
+        // Update the template in userData for a specific template ID (e.g., 1)
         setUserData(prevState => ({
           ...prevState,
-          template: [{ width: newWidth, height: containerHeight }] // Update with new width
+          template: prevState.template.map(template =>
+            template.id === 1 ? { ...template, width: newWidth } : template
+          )
         }));
       }
     }
@@ -67,10 +79,12 @@ export default function Home() {
       const newHeight = (e.clientY / window.innerHeight) * 100;
       if (newHeight >= 6 && newHeight <= 87) {
         setContainerHeight(newHeight);
-        // Update the template in userData
+        // Update the template in userData for a specific template ID (e.g., 1)
         setUserData(prevState => ({
           ...prevState,
-          template: [{ width: containerWidth, height: newHeight }] // Update with new height
+          template: prevState.template.map(template =>
+            template.id === 1 ? { ...template, height: newHeight } : template
+          )
         }));
       }
     }
@@ -92,22 +106,35 @@ export default function Home() {
     };
   }, [isDraggingWidth, isDraggingHeight]);
 
-  const toggleCompactMode = () => {
-    setIsCompact(!isCompact);
+  const toggleEditMode = () => {
+    setIsEdit(!isEdit);
   };
 
   const toggleMode = (mode: string) => {
     setCurrentMode(mode);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newContent = e.target.value;
-    setContent(newContent);
-    
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, contentId: number, field: 'text' | 'title') => {
+    const newValue = e.target.value;
+
     // Update content in userData
     setUserData(prevState => ({
       ...prevState,
-      content: [newContent] 
+      content: prevState.content.map(contentItem =>
+        contentItem.id === contentId ? { ...contentItem, [field]: newValue } : contentItem
+      )
+    }));
+  };
+
+  const handleContentIdChange = (containerId: number, newContentId: number) => {
+    setUserData(prevState => ({
+      ...prevState,
+      template: prevState.template.map(template => ({
+        ...template,
+        containers: template.containers.map(container =>
+          container.id === containerId ? { ...container, contentId: newContentId } : container
+        )
+      }))
     }));
   };
 
@@ -139,29 +166,41 @@ export default function Home() {
             onClick={() => toggleMode('Content')}
           />
           <Icon
-            icon={isCompact ? 'ph:arrow-fat-up-fill' : 'ph:arrow-fat-up-light'}
+            icon={isEdit ? 'ph:arrow-fat-up-fill' : 'ph:arrow-fat-up-light'}
             width="40"
-            onClick={toggleCompactMode}
+            onClick={toggleEditMode}
           />
         </div>
         <hr className="divider" />
 
-        {/* Container Mode */}
-        {currentMode === 'Container' && (
-          <div style={{ display: 'flex', height: '87vh' }}>
-            <div
-              style={{
-                 width: `${userData.template[0]?.width}vw`, 
-                height: `${userData.template[0]?.height}vh`,
-                backgroundColor: '#f0f0f0',
-                position: 'relative',
-                opacity: isCompact ? 1 : 0.6,
-              }}
-            >
-              {userData.content[0]} 
+    {/* Container Mode */}
+{currentMode === 'Container' && (
+  <div style={{ display: 'flex', height: '87vh', flexDirection: 'column' }}>
+    {userData.template.map(template => (
+      <div
+        key={template.id}
+        style={{
+          width: `${template.width}vw`,
+          height: `${template.height}vh`,
+          backgroundColor: '#f0f0f0',
+          position: 'relative',
+          opacity: isEdit ? 1 : 0.6,
+        }}
+      >
+        {template.containers?.map(container => {
+          const contentItem = userData.content.find(content => content.id === container.contentId);
+          
+          // Debug: Log the current container and contentItem
+          console.log('Container:', container);
+          console.log('Content Item:', contentItem);
+
+          return (
+            <div key={container.id} style={{ padding: '10px' }}>
+              {/* Show content text or a placeholder */}
+              {contentItem ? contentItem.text : 'No content available'}
 
               {/* Drag Handles */}
-              {isCompact ? (
+              {isEdit && (
                 <>
                   <div
                     style={{
@@ -190,28 +229,51 @@ export default function Home() {
                     onMouseDown={handleMouseDownHeight}
                   />
                 </>
-              ) : null}
+              )}
+              {/* Dropdown to select content */}
+              {isEdit && (
+                <select
+                  value={container.contentId}
+                  onChange={(e) => handleContentIdChange(container.id, Number(e.target.value))}
+                  style={{ width: '100%', padding: '10px', marginTop: '5px' }}
+                >
+                  {userData.content.map(content => (
+                    <option key={content.id} value={content.id}>
+                      {content.title || 'Untitled'}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
-          </div>
-        )}
-
-        {/* Modules Mode */}
-        {currentMode === 'Modules' && (
-          <div style={{ height: '87vh', backgroundColor: '#e0e0e0', padding: '20px' }}>
-            <h2>Modules</h2>
-          </div>
-        )}
+          );
+        })}
+      </div>
+    ))}
+  </div>
+)}
 
         {/* Content Mode */}
         {currentMode === 'Content' && (
           <div style={{ height: '87vh', backgroundColor: '#e0e0e0', padding: '20px' }}>
             <h2>Edit Container Text</h2>
-            <input
-              type="text"
-              value={content}
-              onChange={handleInputChange}
-              style={{ width: '100%', padding: '10px' }}
-            />
+            {userData.content.map(contentItem => (
+              <div key={contentItem.id} style={{ marginBottom: '10px' }}>
+                <input
+                  type="text"
+                  value={contentItem.title} // Edit title
+                  onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
+                  style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
+                  placeholder="Title"
+                />
+                <input
+                  type="text"
+                  value={contentItem.text}
+                  onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
+                  style={{ width: '100%', padding: '10px' }}
+                  placeholder="Content"
+                />
+              </div>
+            ))}
           </div>
         )}
       </div>
