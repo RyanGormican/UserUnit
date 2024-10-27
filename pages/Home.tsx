@@ -2,26 +2,42 @@ import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
 import '/src/app/globals.css';
 
+interface UserData {
+  template: Array<{
+    id: number;
+    containers: Array<{
+      id: number;
+      title: string;
+      contentId: number;
+      width: number;
+      height: number;
+    }>;
+  }>;
+  content: Array<{
+    id: number;
+    title: string;
+    text: string;
+  }>;
+}
+
 export default function Home() {
-  const [containerWidth, setContainerWidth] = useState(50);
-  const [containerHeight, setContainerHeight] = useState(87);
-  const [isDraggingWidth, setIsDraggingWidth] = useState(false);
-  const [isDraggingHeight, setIsDraggingHeight] = useState(false);
-  const [currentMode, setCurrentMode] = useState('Container');
-  const [isEdit, setIsEdit] = useState(false);
-  const [userData, setUserData] = useState({
+  const [containerWidth, setContainerWidth] = useState<number>(50);
+  const [containerHeight, setContainerHeight] = useState<number>(87);
+  const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
+  const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
+  const [currentMode, setCurrentMode] = useState<string>('Container');
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [userData, setUserData] = useState<UserData>({
     template: [],
     content: []
   });
 
-  // Load user data from local storage on component mount
   useEffect(() => {
     const storedData = localStorage.getItem('Userunitdata');
     if (storedData) {
       setUserData(JSON.parse(storedData));
     } else {
-      // Initialize with default values
-      const initialData = {
+      const initialData: UserData = {
         template: [
           {
             id: 1,
@@ -41,7 +57,6 @@ export default function Home() {
     }
   }, []);
 
-  // Update local storage whenever userData changes
   useEffect(() => {
     localStorage.setItem('Userunitdata', JSON.stringify(userData));
   }, [userData]);
@@ -59,12 +74,10 @@ export default function Home() {
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    // Resize Width
     if (isDraggingWidth) {
       const newWidth = (e.clientX / window.innerWidth) * 100;
       if (newWidth >= 6 && newWidth <= 99) {
         setContainerWidth(newWidth);
-        // Update the template in userData for a specific template ID (e.g., 1)
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
@@ -74,12 +87,10 @@ export default function Home() {
       }
     }
 
-    // Resize Height
     if (isDraggingHeight) {
       const newHeight = (e.clientY / window.innerHeight) * 100;
       if (newHeight >= 6 && newHeight <= 87) {
         setContainerHeight(newHeight);
-        // Update the template in userData for a specific template ID (e.g., 1)
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
@@ -117,7 +128,6 @@ export default function Home() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, contentId: number, field: 'text' | 'title') => {
     const newValue = e.target.value;
 
-    // Update content in userData
     setUserData(prevState => ({
       ...prevState,
       content: prevState.content.map(contentItem =>
@@ -166,104 +176,96 @@ export default function Home() {
             onClick={() => toggleMode('Content')}
           />
           <Icon
-            icon={isEdit ? 'ph:arrow-fat-up-fill' : 'ph:arrow-fat-up-light'}
+            icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'}
             width="40"
             onClick={toggleEditMode}
           />
         </div>
         <hr className="divider" />
 
-    {/* Container Mode */}
-{currentMode === 'Container' && (
-  <div style={{ display: 'flex', height: '87vh', flexDirection: 'column' }}>
-    {userData.template.map(template => (
-      <div
-        key={template.id}
-        style={{
-          width: `${template.width}vw`,
-          height: `${template.height}vh`,
-          backgroundColor: '#f0f0f0',
-          position: 'relative',
-          opacity: isEdit ? 1 : 0.6,
-          overflowY: 'auto',
-          margin: 0 
-        }}
-      >
-        {/* Drag Handles */}
-        {isEdit && (
-          <>
-            <div
-              style={{
-                width: '2px',
-                height: '100%',
-                backgroundColor: '#000',
-                position: 'absolute',
-                right: '50%',
-                top: '0',
-                cursor: 'ew-resize',
-                transform: 'translateX(50%)',
-                zIndex: 10 
-              }}
-              onMouseDown={handleMouseDownWidth}
-            />
-            <div
-              style={{
-                width: '100%',
-                height: '2px',
-                backgroundColor: '#000',
-                position: 'absolute',
-                bottom: '50%',
-                left: '0',
-                cursor: 'ns-resize',
-                transform: 'translateY(50%)',
-                zIndex: 10 
-              }}
-              onMouseDown={handleMouseDownHeight}
-            />
-          </>
+        {currentMode === 'Container' && (
+          <div style={{ display: 'flex', height: '87vh', flexDirection: 'column' }}>
+            {userData.template.map(template => (
+              <div
+                key={template.id}
+                style={{
+                  width: `${template.width}vw`,
+                  height: `${template.height}vh`,
+                  backgroundColor: '#f0f0f0',
+                  position: 'relative',
+                  opacity: isEdit ? 1 : 0.6,
+                  overflowY: 'auto',
+                  margin: 0 
+                }}
+              >
+                {isEdit && (
+                  <>
+                    <div
+                      style={{
+                        width: '2px',
+                        height: '100%',
+                        backgroundColor: '#000',
+                        position: 'absolute',
+                        right: '50%',
+                        top: '0',
+                        cursor: 'ew-resize',
+                        transform: 'translateX(50%)',
+                        zIndex: 10 
+                      }}
+                      onMouseDown={handleMouseDownWidth}
+                    />
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '2px',
+                        backgroundColor: '#000',
+                        position: 'absolute',
+                        bottom: '50%',
+                        left: '0',
+                        cursor: 'ns-resize',
+                        transform: 'translateY(50%)',
+                        zIndex: 10 
+                      }}
+                      onMouseDown={handleMouseDownHeight}
+                    />
+                  </>
+                )}
+
+                {template.containers?.map(container => {
+                  const contentItem = userData.content.find(content => content.id === container.contentId);
+
+                  return (
+                    <div key={container.id} style={{ padding: '10px' }}>
+                      {isEdit && (
+                        <select
+                          value={container.contentId}
+                          onChange={(e) => handleContentIdChange(container.id, Number(e.target.value))}
+                          style={{
+                            width: '25%',
+                            marginTop: '5px',
+                            position: 'absolute', 
+                            zIndex: 10, 
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)', 
+                          }}
+                        >
+                          {userData.content.map(content => (
+                            <option key={content.id} value={content.id}>
+                              {content.title || 'Untitled'}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      <p>{contentItem ? contentItem.text : 'No content available'}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         )}
 
-        {/* Content Display */}
-        {template.containers?.map(container => {
-          const contentItem = userData.content.find(content => content.id === container.contentId);
-
-          return (
-            <div key={container.id} style={{ padding: '10px' }}>
-              {/* Dropdown to select content */}
-              {isEdit && (
-                <select
-                  value={container.contentId}
-                  onChange={(e) => handleContentIdChange(container.id, Number(e.target.value))}
-                  style={{
-                    width: '25%',
-                    marginTop: '5px',
-                    position: 'absolute', 
-                    zIndex: 10, 
-                       top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)', 
-                  }}
-                >
-                  {userData.content.map(content => (
-                    <option key={content.id} value={content.id}>
-                      {content.title || 'Untitled'}
-                    </option>
-                  ))}
-                </select>
-              )}
-              
-              {/* Show content text or a placeholder */}
-              <p>{contentItem ? contentItem.text : 'No content available'}</p>
-            </div>
-          );
-        })}
-      </div>
-    ))}
-  </div>
-)}
-
-
-        {/* Content Mode */}
         {currentMode === 'Content' && (
           <div style={{ height: '87vh', backgroundColor: '#e0e0e0', padding: '20px' }}>
             <h2>Edit Container Text</h2>
