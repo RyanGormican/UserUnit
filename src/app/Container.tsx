@@ -1,4 +1,3 @@
-// Container.tsx
 import React from 'react';
 
 interface ContentItem {
@@ -34,7 +33,8 @@ const Container: React.FC<ContainerProps> = ({
   onMouseDownWidth,
   onMouseDownHeight,
 }) => {
-  const contentItem = contentItems.find(content => content.id === container.contentId);
+  const contentItem = Array.isArray(contentItems) ? 
+    contentItems.find(content => content.id === container.contentId) : null;
 
   return (
     <div
@@ -95,7 +95,7 @@ const Container: React.FC<ContainerProps> = ({
             transform: 'translate(-50%, -50%)',
           }}
         >
-          {contentItems.map(content => (
+          {Array.isArray(contentItems) && contentItems.map(content => (
             <option key={content.id} value={content.id}>
               {content.title || 'Untitled'}
             </option>

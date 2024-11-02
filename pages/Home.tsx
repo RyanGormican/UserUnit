@@ -136,14 +136,7 @@ export default function Home() {
     setCurrentMode(mode);
   };
 
-  const handleInputChange = (id: number, field: 'text' | 'title', value: string) => {
-    setUserData(prevState => ({
-      ...prevState,
-      content: prevState.content.map(contentItem =>
-        contentItem.id === id ? { ...contentItem, [field]: value } : contentItem
-      ),
-    }));
-  };
+
 
   const handleContentIdChange = (containerId: number, newContentId: number) => {
     setUserData(prevState => ({
@@ -156,6 +149,8 @@ export default function Home() {
       })),
     }));
   };
+
+
 
   return (
     <main>
@@ -200,7 +195,7 @@ export default function Home() {
         {currentMode === 'Content' && (
           <Content
             contentItems={userData.content}
-            onInputChange={handleInputChange}
+            onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
           />
         )}
       </div>
