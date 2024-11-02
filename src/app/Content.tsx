@@ -48,7 +48,11 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
 
   // Slice the array for the current page
   const paginatedItems = filteredContentItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-
+useEffect(() => {
+  if (currentPage > totalPages) {
+    setCurrentPage(totalPages > 0 ? 1 : 0);
+  }
+}, [filteredContentItems, totalPages, currentPage]);
   return (
     <div style={{ height: '100%', backgroundColor: '#e0e0e0', padding: '20px' }}>
       <h2 style={{ fontSize: '2vh' }}>Edit Container Text</h2>
