@@ -20,7 +20,6 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
 
   useEffect(() => {
     setLocalContentItems(Array.isArray(contentItems) ? contentItems : []);
-    setCurrentPage(totalPages);
   }, [contentItems]);
 
   const addContentItem = () => {
@@ -28,6 +27,7 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
     const newContentItem = { id: newId, title: '', text: '' };
     const updatedContentItems = [...localContentItems, newContentItem];
     setLocalContentItems(updatedContentItems);
+    setCurrentPage(totalPages);
     onUpdateUserData({ content: updatedContentItems });
   };
 
