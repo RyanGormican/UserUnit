@@ -14,6 +14,8 @@ interface ContainerProps {
     contentId: number;
     width: number;
     height: number;
+    topLeft: { x: number; y: number };
+    bottomRight: { x: number; y: number }; 
   };
   contentItems: ContentItem[];
   isEdit: boolean;
@@ -31,16 +33,19 @@ const Container: React.FC<ContainerProps> = ({
   onMouseDownWidth,
   onMouseDownHeight,
 }) => {
-  const contentItem = Array.isArray(contentItems) ? 
-    contentItems.find(content => content.id === container.contentId) : null;
+  const contentItem = Array.isArray(contentItems)
+    ? contentItems.find(content => content.id === container.contentId) 
+    : null;
 
   return (
     <div
       style={{
+        position: 'absolute', 
+        left: `${container.topLeft.x}vw`, 
+        top: `${container.topLeft.y+13}vh`, 
         width: `${container.width}vw`,
         height: `${container.height}vh`,
         backgroundColor: '#f0f0f0',
-        position: 'relative',
         opacity: isEdit ? 1 : 0.6,
         overflowY: 'auto',
         margin: 0,

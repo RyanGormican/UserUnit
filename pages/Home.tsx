@@ -10,6 +10,8 @@ interface ContainerData {
   contentId: number;
   width: number;
   height: number;
+  topLeft: { x: number; y: number }; // Store top-left position
+  bottomRight: { x: number; y: number }; // Store bottom-right position
 }
 
 interface Template {
@@ -53,7 +55,7 @@ export default function Home() {
           {
             id: 1,
             containers: [
-              { id: 1, title: 'Sample', contentId: 1, width: 50, height: 87 },
+              { id: 1, title: 'Sample', contentId: 1, width: 50, height: 87, topLeft: { x: 0, y: 0 }, bottomRight: { x: 50, y: 87 } },
             ],
           },
         ],
@@ -82,23 +84,32 @@ export default function Home() {
 
   const handleMouseMove = (e: MouseEvent) => {
     const container = userData.template[0]?.containers[0];
-    if (!container) return; // Prevents potential null reference
+    if (!container) return; 
 
     let newWidth = container.width;
     let newHeight = container.height;
 
+    // Get the parent container's dimensions
+    const parentContainer = document.querySelector('div[style*="display: flex"]'); 
+    const parentWidth = parentContainer?.clientWidth || window.innerWidth;
+    const parentHeight = parentContainer?.clientHeight || window.innerHeight;
+
     if (isDraggingWidth) {
-      newWidth = (e.clientX / window.innerWidth) * 100;
+      newWidth = (e.clientX / parentWidth) * 100; // Calculating new width in percentage of parent width
       if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
+        const updatedContainer = {
+          ...container,
+          width: newWidth,
+          bottomRight: { x: newWidth, y: container.bottomRight.y }, // Update bottom-right x
+        };
+
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
             template.id === 1
               ? {
                   ...template,
-                  containers: template.containers.map(container =>
-                    container.id === 1 ? { ...container, width: newWidth } : container
-                  ),
+                  containers: [updatedContainer], // Update container array
                 }
               : template
           ),
@@ -107,17 +118,21 @@ export default function Home() {
     }
 
     if (isDraggingHeight) {
-      newHeight = (e.clientY / window.innerHeight) * 100;
+      newHeight = (e.clientY / parentHeight) * 100; // Calculating new height in percentage of parent height
       if (newHeight >= MIN_HEIGHT && newHeight <= MAX_HEIGHT) {
+        const updatedContainer = {
+          ...container,
+          height: newHeight,
+          bottomRight: { x: container.bottomRight.x, y: newHeight }, // Update bottom-right y
+        };
+
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
             template.id === 1
               ? {
                   ...template,
-                  containers: template.containers.map(container =>
-                    container.id === 1 ? { ...container, height: newHeight } : container
-                  ),
+                  containers: [updatedContainer], // Update container array
                 }
               : template
           ),
