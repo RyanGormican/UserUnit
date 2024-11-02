@@ -50,7 +50,7 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
   const paginatedItems = filteredContentItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 useEffect(() => {
   if (currentPage > totalPages) {
-    setCurrentPage(totalPages > 0 ? 1 : 0);
+    setCurrentPage(1);
   }
 }, [filteredContentItems, totalPages, currentPage]);
   return (
