@@ -4,23 +4,34 @@ import Container from '../src/app/Container';
 import Content from '../src/app/Content';
 import '/src/app/globals.css';
 
-interface UserData {
-  template: Array<{
-    id: number;
-    containers: Array<{
-      id: number;
-      title: string;
-      contentId: number;
-      width: number;
-      height: number;
-    }>;
-  }>;
-  content: Array<{
-    id: number;
-    title: string;
-    text: string;
-  }>;
+interface ContainerData {
+  id: number;
+  title: string;
+  contentId: number;
+  width: number;
+  height: number;
 }
+
+interface Template {
+  id: number;
+  containers: ContainerData[];
+}
+
+interface ContentData {
+  id: number;
+  title: string;
+  text: string;
+}
+
+interface UserData {
+  template: Template[];
+  content: ContentData[];
+}
+
+const MIN_WIDTH = 6;
+const MAX_WIDTH = 99;
+const MIN_HEIGHT = 6;
+const MAX_HEIGHT = 87;
 
 export default function Home() {
   const [userData, setUserData] = useState<UserData>({
@@ -62,33 +73,34 @@ export default function Home() {
   }, [userData]);
 
   const handleMouseDownWidth = () => {
-    if (isEdit) {
-      setIsDraggingWidth(true);
-    }
+    if (isEdit) setIsDraggingWidth(true);
   };
 
   const handleMouseDownHeight = () => {
-    if (isEdit) {
-      setIsDraggingHeight(true);
-    }
+    if (isEdit) setIsDraggingHeight(true);
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    let newWidth = userData.template[0].containers[0].width;
-    let newHeight = userData.template[0].containers[0].height;
+    const container = userData.template[0]?.containers[0];
+    if (!container) return; // Prevents potential null reference
+
+    let newWidth = container.width;
+    let newHeight = container.height;
 
     if (isDraggingWidth) {
       newWidth = (e.clientX / window.innerWidth) * 100;
-      if (newWidth >= 6 && newWidth <= 99) {
+      if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
-            template.id === 1 ? {
-              ...template,
-              containers: template.containers.map(container =>
-                container.id === 1 ? { ...container, width: newWidth } : container
-              ),
-            } : template,
+            template.id === 1
+              ? {
+                  ...template,
+                  containers: template.containers.map(container =>
+                    container.id === 1 ? { ...container, width: newWidth } : container
+                  ),
+                }
+              : template
           ),
         }));
       }
@@ -96,16 +108,18 @@ export default function Home() {
 
     if (isDraggingHeight) {
       newHeight = (e.clientY / window.innerHeight) * 100;
-      if (newHeight >= 6 && newHeight <= 87) {
+      if (newHeight >= MIN_HEIGHT && newHeight <= MAX_HEIGHT) {
         setUserData(prevState => ({
           ...prevState,
           template: prevState.template.map(template =>
-            template.id === 1 ? {
-              ...template,
-              containers: template.containers.map(container =>
-                container.id === 1 ? { ...container, height: newHeight } : container
-              ),
-            } : template,
+            template.id === 1
+              ? {
+                  ...template,
+                  containers: template.containers.map(container =>
+                    container.id === 1 ? { ...container, height: newHeight } : container
+                  ),
+                }
+              : template
           ),
         }));
       }
@@ -129,14 +143,12 @@ export default function Home() {
   }, [isDraggingWidth, isDraggingHeight]);
 
   const toggleEditMode = () => {
-    setIsEdit(!isEdit);
+    setIsEdit(prev => !prev);
   };
 
   const toggleMode = (mode: string) => {
     setCurrentMode(mode);
   };
-
-
 
   const handleContentIdChange = (containerId: number, newContentId: number) => {
     setUserData(prevState => ({
@@ -149,8 +161,6 @@ export default function Home() {
       })),
     }));
   };
-
-
 
   return (
     <main>
