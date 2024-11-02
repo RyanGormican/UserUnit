@@ -14,7 +14,7 @@ interface ContainerProps {
     contentId: number;
     width: number;
     height: number;
-    topLeft: { x: number; y: number };
+    topLeft: { x: number; y: number }; 
     bottomRight: { x: number; y: number }; 
   };
   contentItems: ContentItem[];
@@ -40,9 +40,9 @@ const Container: React.FC<ContainerProps> = ({
   return (
     <div
       style={{
-        position: 'absolute', 
+        position: 'absolute',
         left: `${container.topLeft.x}vw`, 
-        top: `${container.topLeft.y+13}vh`, 
+        top: `${container.topLeft.y + 13}vh`, 
         width: `${container.width}vw`,
         height: `${container.height}vh`,
         backgroundColor: '#f0f0f0',
@@ -105,7 +105,45 @@ const Container: React.FC<ContainerProps> = ({
           ))}
         </select>
       )}
+
       <p>{contentItem ? contentItem.text : 'No content available'}</p>
+
+
+      {isEdit && (
+        <>
+          {container.topLeft.y == 0 && (
+<button
+  style={{
+    position: 'fixed',
+    left: `${container.topLeft.x + container.width / 2}vw`, 
+    top: `${container.height+14}vh`, 
+    zIndex: 10,
+    padding: '5px 10px',
+    backgroundColor: 'lightblue',
+    transform: 'translateX(-50%)', 
+  }}
+>
+  +
+</button>
+          )}
+          
+          {container.topLeft.x == 0 && (
+            <button
+              style={{
+                position: 'fixed',
+                left: `${container.bottomRight.x+1}vw`,
+                top: `${(container.height/2)+13}vh`, 
+                transform: 'translateY(-50%)',
+                zIndex: 10,
+                padding: '5px 10px', 
+                backgroundColor: 'lightblue',
+              }}
+            >
+              +
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 };
