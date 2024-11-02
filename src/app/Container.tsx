@@ -18,7 +18,6 @@ interface ContainerProps {
   contentItems: ContentItem[];
   isEdit: boolean;
   onContentIdChange: (containerId: number, newContentId: number) => void;
-  onResize: (newWidth: number, newHeight: number) => void;
   onMouseDownWidth: () => void;
   onMouseDownHeight: () => void;
 }
@@ -29,7 +28,6 @@ const Container: React.FC<ContainerProps> = ({
   contentItems,
   isEdit,
   onContentIdChange,
-  onResize,
   onMouseDownWidth,
   onMouseDownHeight,
 }) => {
