@@ -143,7 +143,7 @@ export default function Home() {
         <hr className="divider" />
         <div className="buttons flex">
           <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} />
-          <Icon icon="subway:write" width="40" onClick={() => toggleMode('Content')} />
+          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} />
           <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} width="40" onClick={toggleEditMode} />
             {/* Template Selector */}

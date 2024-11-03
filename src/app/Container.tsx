@@ -42,7 +42,6 @@ const Container: React.FC<ContainerProps> = ({
   const minHeight = 6; // minimum height in vh
   const maxWidth = 100; // maximum width in vw
   const maxHeight = 87; // maximum height in vh
-
 const handleDragTopLeft = (e: React.MouseEvent) => {
   e.preventDefault();
   const startX = e.clientX;
@@ -52,19 +51,24 @@ const handleDragTopLeft = (e: React.MouseEvent) => {
     const dx = moveEvent.clientX - startX;
     const dy = moveEvent.clientY - startY;
 
-    // Calculate new top left position and width/height
-    const newTopLeft = {
-      x: Math.max(container.topLeft.x + (dx / window.innerWidth) * 100, 0), // Prevent negative X
-      y: Math.max(container.topLeft.y + (dy / window.innerHeight) * 100, 0), // Prevent negative Y
-    };
+    // Calculate potential new top left position
+    const newTopLeftX = container.topLeft.x + (dx / window.innerWidth) * 100;
+    const newTopLeftY = container.topLeft.y + (dy / window.innerHeight) * 100;
 
-    const newWidth = Math.max(Math.min(container.width - (dx / window.innerWidth) * 100, maxWidth), minWidth); // Decrease width
-    const newHeight = Math.max(Math.min(container.height - (dy / window.innerHeight) * 100, maxHeight), minHeight); // Decrease height
+    // Constrain top left to be non-negative
+    const constrainedTopLeftX = Math.max(newTopLeftX, 0); 
+    const constrainedTopLeftY = Math.max(newTopLeftY, 0); 
+    const finalTopLeftX = Math.min(constrainedTopLeftX, container.bottomRight.x - minWidth);
+    const finalTopLeftY = Math.min(constrainedTopLeftY, container.bottomRight.y - minHeight);
+
+    // Calculate new width and height based on the final constrained top left position
+    const newWidth = Math.max(Math.min(container.bottomRight.x - finalTopLeftX, maxWidth), minWidth);
+    const newHeight = Math.max(Math.min(container.bottomRight.y - finalTopLeftY, maxHeight), minHeight);
 
     // Create updated container
     const updatedContainer = {
       ...container,
-      topLeft: newTopLeft,
+      topLeft: { x: finalTopLeftX, y: finalTopLeftY },
       width: newWidth,
       height: newHeight,
     };
@@ -80,8 +84,6 @@ const handleDragTopLeft = (e: React.MouseEvent) => {
           }
         : t
     );
-
- 
 
     // Call onUpdateUserData with the new template structure
     onUpdateUserData({ template: updatedTemplate });
@@ -105,19 +107,23 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
     const dx = moveEvent.clientX - startX;
     const dy = moveEvent.clientY - startY;
 
-    // Calculate new bottom right position and width/height
-    const newBottomRight = {
-      x: Math.min(container.bottomRight.x + (dx / window.innerWidth) * 100, maxWidth), // Prevent exceeding max width
-      y: Math.min(container.bottomRight.y + (dy / window.innerHeight) * 100, maxHeight), // Prevent exceeding max height
-    };
+    // Calculate potential new bottom right position
+    const newBottomRightX = container.bottomRight.x + (dx / window.innerWidth) * 100;
+    const newBottomRightY = container.bottomRight.y + (dy / window.innerHeight) * 100;
 
-    const newWidth = Math.max(Math.min(newBottomRight.x - container.topLeft.x, maxWidth), minWidth); // Update width
-    const newHeight = Math.max(Math.min(newBottomRight.y - container.topLeft.y, maxHeight), minHeight); // Update height
+    // Ensure the new bottom right is at least 6vw to the right of the top left
+    const constrainedBottomRightX = Math.max(newBottomRightX, container.topLeft.x + minWidth);
+    // Ensure the new bottom right is at least 6vh below the top left
+    const constrainedBottomRightY = Math.max(newBottomRightY, container.topLeft.y + minHeight);
+
+    // Calculate new width and height based on the constrained bottom right position
+    const newWidth = Math.max(Math.min(constrainedBottomRightX - container.topLeft.x, maxWidth), minWidth);
+    const newHeight = Math.max(Math.min(constrainedBottomRightY - container.topLeft.y, maxHeight), minHeight);
 
     // Create updated container
     const updatedContainer = {
       ...container,
-      bottomRight: newBottomRight,
+      bottomRight: { x: constrainedBottomRightX, y: constrainedBottomRightY },
       width: newWidth,
       height: newHeight,
     };
@@ -134,7 +140,6 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
         : t
     );
 
-
     // Call onUpdateUserData with the new template structure
     onUpdateUserData({ template: updatedTemplate });
   };
@@ -147,6 +152,7 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 };
+
 
 
 const handleDeleteContainer = () => {
