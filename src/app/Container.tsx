@@ -99,23 +99,23 @@ const buttonHeight = 6; // 6vh height
 
   // Define button positions with their respective conditions
   const isTopMiddleFit = container.topLeft.y >= buttonHeight && canFitInRegion(
-    { x: container.topLeft.x, y: container.topLeft.y - buttonHeight }, // Position above the container
-    buttonWidth, buttonHeight // Check against full width of the container
+    { x: container.topLeft.x, y: container.topLeft.y - 6 }, // Position above the container
+    buttonWidth, 6 // Check against full width of the container
   );
 
   const isBottomMiddleFit = container.bottomRight.y <= 81 && canFitInRegion(
-    { x: container.topLeft.x + (container.width / 2) - (buttonWidth / 2), y: container.bottomRight.y + 13 }, // Centered below the container
-    buttonWidth, buttonHeight // Check against full width of the container
+    { x: container.topLeft.x, y: container.bottomRight.y }, // Centered below the container
+    buttonWidth, 6 // Check against full width of the container
   );
 
   const isLeftMiddleFit = container.topLeft.x >= 6 && canFitInRegion(
-    { x: container.topLeft.x - buttonWidth - 2, y: container.topLeft.y + (container.height / 2) - (buttonHeight / 2) }, // Centered on the left side
-    buttonWidth, buttonHeight // Check against full height of the button
+    { x: container.topLeft.x-6, y: container.topLeft.y }, // Centered on the left side
+    6, container.height // Check against full height of the button
   );
 
   const isRightMiddleFit = container.bottomRight.x <= 94 && canFitInRegion(
-    { x: container.bottomRight.x + 2, y: container.topLeft.y + (container.height / 2) - (buttonHeight / 2) }, // Centered on the right side
-    buttonWidth, buttonHeight // Check against full height of the button
+    { x: container.bottomRight.x, y: container.topLeft.y }, // Centered on the right side
+    6, container.height // Check against full height of the button
   );
 const handleDragTopLeft = (e: React.MouseEvent) => {
   e.preventDefault();
@@ -156,10 +156,10 @@ const handleDragTopLeft = (e: React.MouseEvent) => {
           if (c.id === container.id) return false; // Skip itself
           const { topLeft, bottomRight } = c;
           return (
-            newContainer.topLeft.x < bottomRight.x &&
-            newContainer.bottomRight.x > topLeft.x &&
-            newContainer.topLeft.y < bottomRight.y &&
-            newContainer.bottomRight.y > topLeft.y
+            newContainer.topLeft.x +0.01 <= bottomRight.x &&
+            newContainer.bottomRight.x -0.01 >= topLeft.x &&
+            newContainer.topLeft.y+0.01 <= bottomRight.y &&
+            newContainer.bottomRight.y-0.01 >= topLeft.y
           );
         })
       );
@@ -234,10 +234,10 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
           if (c.id === container.id) return false; // Skip itself
           const { topLeft, bottomRight } = c;
           return (
-            newContainer.topLeft.x <= bottomRight.x &&
-            newContainer.bottomRight.x >= topLeft.x &&
-            newContainer.topLeft.y <= bottomRight.y &&
-            newContainer.bottomRight.y >= topLeft.y
+            newContainer.topLeft.x+0.01 <= bottomRight.x &&
+            newContainer.bottomRight.x-0.01 >= topLeft.x &&
+            newContainer.topLeft.y+0.01 <= bottomRight.y &&
+            newContainer.bottomRight.y-0.01 >= topLeft.y
           );
         })
       );
@@ -286,9 +286,9 @@ const handleDeleteContainer = () => {
 };
 const containerOffsets = {
   top: { x: 0, y: -6, width: container.width, height: 6 },
-  bottom: { x: 0, y: 6, width: container.width, height: 6 },
+  bottom: { x: 0, y: container.height, width: container.width, height: 6 },
   left: { x: -6, y: 0, width: 6, height: container.height },
-  right: { x: 6, y: 0, width: 6, height: container.height },
+  right: { x: container.width, y: 0, width: 6, height: container.height },
 };
 
 const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
