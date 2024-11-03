@@ -31,8 +31,8 @@ interface UserData {
 }
 
 const MIN_WIDTH = 6;
-const MAX_WIDTH = 99;
 const MIN_HEIGHT = 6;
+const MAX_WIDTH = 100;
 const MAX_HEIGHT = 87;
 
 export default function Home() {
@@ -42,6 +42,7 @@ export default function Home() {
   });
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentMode, setCurrentMode] = useState<string>('Container');
+  const [currentTemplateId, setCurrentTemplateId] = useState<number | null>(null); // State for current template
   const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
 
@@ -177,6 +178,33 @@ export default function Home() {
     }));
   };
 
+  // Add a new empty container
+  const addContainer = () => {
+    if (currentTemplateId !== null) {
+      const newContainer: ContainerData = {
+        id: Date.now(), 
+        title: 'New Container',
+        contentId: 1, 
+        width: 50,
+        height: 87,
+        topLeft: { x: 0, y: 0 },
+        bottomRight: { x: 50, y: 87 },
+      };
+
+      setUserData(prevState => ({
+        ...prevState,
+        template: prevState.template.map(template => 
+          template.id === currentTemplateId
+            ? {
+                ...template,
+                containers: [...template.containers, newContainer], // Add the new container
+              }
+            : template
+        ),
+      }));
+    }
+  };
+
   return (
     <main>
       <div>
@@ -201,19 +229,32 @@ export default function Home() {
         <hr className="divider" />
 
         {currentMode === 'Container' && (
-          <div style={{ display: 'flex', height: '87vh', flexDirection: 'column' }}>
-            {userData.template.map(template => (
-              <Container
-                key={template.id}
-                templateId={template.id}
-                container={template.containers[0]}
-                contentItems={userData.content}
-                isEdit={isEdit}
-                onContentIdChange={handleContentIdChange}
-                onMouseDownWidth={handleMouseDownWidth}
-                onMouseDownHeight={handleMouseDownHeight}
-              />
+          <div style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+            {userData.template.length > 0 && userData.template.map(template => (
+              <React.Fragment key={template.id}>
+                {currentTemplateId === null && setCurrentTemplateId(template.id)} {/* Set the current template if not set */}
+                {template.containers.map(container => (
+                  <Container
+                    key={container.id}
+                    template={template} 
+                    templateid={template.id} 
+                    container={container} 
+                    containerid={container.id}
+                    contentItems={userData.content}
+                    isEdit={isEdit}
+                    onContentIdChange={handleContentIdChange}
+                    onMouseDownWidth={handleMouseDownWidth}
+                    onMouseDownHeight={handleMouseDownHeight}
+                    onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))} 
+                  />
+                ))}
+              </React.Fragment>
             ))}
+            {currentTemplateId !== null && userData.template.find(template => template.id === currentTemplateId)?.containers.length === 0 && (
+              <button onClick={addContainer} style={{ marginTop: '20px',  padding: '10px',  backgroundColor: 'lightblue'  }}>
+                ADD CONTAINER
+              </button>
+            )}
           </div>
         )}
 
