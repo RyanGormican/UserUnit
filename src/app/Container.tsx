@@ -6,9 +6,22 @@ interface ContentItem {
   title: string;
   text: string;
 }
-
+interface Template {
+  id: number;
+  containers: {
+    id: number;
+    title: string;
+    contentId: number;
+    width: number;
+    height: number;
+    topLeft: { x: number; y: number };
+    bottomRight: { x: number; y: number };
+  }[];
+  name: string; 
+}
 interface ContainerProps {
   templateId: number;
+  templateData: Template[]; 
   container: {
     id: number;
     title: string;
@@ -21,8 +34,9 @@ interface ContainerProps {
   contentItems: ContentItem[];
   isEdit: boolean;
   onContentIdChange: (containerId: number, newContentId: number) => void;
-  onUpdateUserData: (newData: any) => void; // For updating the user data
+  onUpdateUserData: (newData: any) => void; 
 }
+
 
 const Container: React.FC<ContainerProps> = ({
   templateId,
