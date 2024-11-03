@@ -18,6 +18,7 @@ interface ContainerData {
 interface Template {
   id: number;
   containers: ContainerData[];
+  name: string;
 }
 
 interface ContentData {
