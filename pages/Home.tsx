@@ -4,6 +4,7 @@ import Container from '../src/app/Container';
 import Content from '../src/app/Content';
 import Template from '../src/app/Template';
 import '/src/app/globals.css';
+import Feedback from '../src/app/components/Feedback/Feedback';
 
 interface ContainerData {
   id: number;
@@ -125,7 +126,10 @@ export default function Home() {
       }));
     }
   };
-
+  const toggleFeedbackModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+    const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <main>
       <div>
@@ -139,7 +143,11 @@ export default function Home() {
           <a href="https://ryangormicanportfoliohub.vercel.app/">
             <Icon icon="teenyicons:computer-outline" color="#199c35" width="60" />
           </a>
+          <div className="cursor-pointer"  onClick={toggleFeedbackModal}>
+  <Icon icon="material-symbols:feedback" width="60" />
+</div>
         </span>
+            {isModalOpen && <Feedback isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
         <div className="title">UserUnit</div>
         <hr className="divider" />
         <div className="buttons flex">
