@@ -132,14 +132,18 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
     // Ensure the new bottom right is at least 6vh below the top left
     const constrainedBottomRightY = Math.max(newBottomRightY, container.topLeft.y + minHeight);
 
+    // Constrain the bottom right position to the maximum allowed limits
+    const finalBottomRightX = Math.min(constrainedBottomRightX, 100); // Ensure x does not exceed 100
+    const finalBottomRightY = Math.min(constrainedBottomRightY, 87); // Ensure y does not exceed 87
+
     // Calculate new width and height based on the constrained bottom right position
-    const newWidth = Math.max(Math.min(constrainedBottomRightX - container.topLeft.x, maxWidth), minWidth);
-    const newHeight = Math.max(Math.min(constrainedBottomRightY - container.topLeft.y, maxHeight), minHeight);
+    const newWidth = Math.max(Math.min(finalBottomRightX - container.topLeft.x, maxWidth), minWidth);
+    const newHeight = Math.max(Math.min(finalBottomRightY - container.topLeft.y, maxHeight), minHeight);
 
     // Create updated container
     const updatedContainer = {
       ...container,
-      bottomRight: { x: constrainedBottomRightX, y: constrainedBottomRightY },
+      bottomRight: { x: finalBottomRightX, y: finalBottomRightY },
       width: newWidth,
       height: newHeight,
     };
@@ -168,7 +172,6 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
 };
-
 
 
 const handleDeleteContainer = () => {
