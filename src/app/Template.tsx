@@ -37,8 +37,9 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData }) 
     onUpdateUserData({ template: updatedTemplates }); 
   };
 
+  // Generate a unique ID for containers
   const generateContainerId = () => {
-    return Date.now(); // Use current timestamp as a unique ID
+    return Date.now() + Math.random(); // Combine timestamp and random number for uniqueness
   };
 
   const copyTemplateItem = (id: number) => {

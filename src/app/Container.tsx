@@ -58,6 +58,56 @@ const Container: React.FC<ContainerProps> = ({
   const minHeight = 6; // minimum height in vh
   const maxWidth = 100; // maximum width in vw
   const maxHeight = 87; // maximum height in vh
+    // Function to check if a new button can fit in the space
+  const canFitInRegion = (newTopLeft: { x: number; y: number }, width: number, height: number): boolean => {
+    // Find the template by templateId
+    const template = templateData.find(t => t.id === templateId);
+    
+    if (!template) return true; // If no template found, allow placement
+
+    // Check against all containers in that template
+    for (const cont of template.containers) {
+      const { topLeft, bottomRight } = cont;
+
+      // Check if the new button overlaps with existing containers
+      const isOverlapping = (
+        newTopLeft.x < bottomRight.x &&
+        newTopLeft.x + width > topLeft.x &&
+        newTopLeft.y < bottomRight.y &&
+        newTopLeft.y + height > topLeft.y
+      );
+
+      if (isOverlapping) {
+        return false; // Collision detected, cannot fit
+      }
+    }
+
+    return true; // No collisions detected
+  };
+ // Define the dimensions for the buttons
+const buttonWidth = container.width; // Full width of the container
+const buttonHeight = 6; // 6vh height
+
+  // Define button positions with their respective conditions
+  const isTopMiddleFit = container.topLeft.y >= buttonHeight && canFitInRegion(
+    { x: container.topLeft.x, y: container.topLeft.y - buttonHeight }, // Position above the container
+    buttonWidth, buttonHeight // Check against full width of the container
+  );
+
+  const isBottomMiddleFit = container.bottomRight.y <= 81 && canFitInRegion(
+    { x: container.topLeft.x + (container.width / 2) - (buttonWidth / 2), y: container.bottomRight.y + 13 }, // Centered below the container
+    buttonWidth, buttonHeight // Check against full width of the container
+  );
+
+  const isLeftMiddleFit = container.topLeft.x >= 6 && canFitInRegion(
+    { x: container.topLeft.x - buttonWidth - 2, y: container.topLeft.y + (container.height / 2) - (buttonHeight / 2) }, // Centered on the left side
+    buttonWidth, buttonHeight // Check against full height of the button
+  );
+
+  const isRightMiddleFit = container.bottomRight.x <= 94 && canFitInRegion(
+    { x: container.bottomRight.x + 2, y: container.topLeft.y + (container.height / 2) - (buttonHeight / 2) }, // Centered on the right side
+    buttonWidth, buttonHeight // Check against full height of the button
+  );
 const handleDragTopLeft = (e: React.MouseEvent) => {
   e.preventDefault();
   const startX = e.clientX;
@@ -89,20 +139,39 @@ const handleDragTopLeft = (e: React.MouseEvent) => {
       height: newHeight,
     };
 
-    // Pass the updated container to the parent for updating
-    const updatedTemplate = templateData.map(t =>
-      t.id === templateId
-        ? {
-            ...t,
-            containers: t.containers.map(c =>
-              c.id === container.id ? updatedContainer : c // Update only the modified container
-            ),
-          }
-        : t
-    );
+    // Check for conflicts with other containers
+    const isConflicting = (newContainer: typeof updatedContainer) => {
+      return templateData.some(t => 
+        t.id === templateId && 
+        t.containers.some(c => {
+          if (c.id === container.id) return false; // Skip itself
+          const { topLeft, bottomRight } = c;
+          return (
+            newContainer.topLeft.x < bottomRight.x &&
+            newContainer.bottomRight.x > topLeft.x &&
+            newContainer.topLeft.y < bottomRight.y &&
+            newContainer.bottomRight.y > topLeft.y
+          );
+        })
+      );
+    };
 
-    // Call onUpdateUserData with the new template structure
-    onUpdateUserData({ template: updatedTemplate });
+    if (!isConflicting(updatedContainer)) {
+      // Pass the updated container to the parent for updating
+      const updatedTemplate = templateData.map(t =>
+        t.id === templateId
+          ? {
+              ...t,
+              containers: t.containers.map(c =>
+                c.id === container.id ? updatedContainer : c // Update only the modified container
+              ),
+            }
+          : t
+      );
+
+      // Call onUpdateUserData with the new template structure
+      onUpdateUserData({ template: updatedTemplate });
+    }
   };
 
   const onMouseUp = () => {
@@ -127,9 +196,9 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
     const newBottomRightX = container.bottomRight.x + (dx / window.innerWidth) * 100;
     const newBottomRightY = container.bottomRight.y + (dy / window.innerHeight) * 100;
 
-    // Ensure the new bottom right is at least 6vw to the right of the top left
+    // Ensure the new bottom right is at least minWidth to the right of the top left
     const constrainedBottomRightX = Math.max(newBottomRightX, container.topLeft.x + minWidth);
-    // Ensure the new bottom right is at least 6vh below the top left
+    // Ensure the new bottom right is at least minHeight below the top left
     const constrainedBottomRightY = Math.max(newBottomRightY, container.topLeft.y + minHeight);
 
     // Constrain the bottom right position to the maximum allowed limits
@@ -148,20 +217,39 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
       height: newHeight,
     };
 
-    // Pass the updated container to the parent for updating
-    const updatedTemplate = templateData.map(t =>
-      t.id === templateId
-        ? {
-            ...t,
-            containers: t.containers.map(c =>
-              c.id === container.id ? updatedContainer : c // Update only the modified container
-            ),
-          }
-        : t
-    );
+    // Check for conflicts with other containers
+    const isConflicting = (newContainer: typeof updatedContainer) => {
+      return templateData.some(t => 
+        t.id === templateId && 
+        t.containers.some(c => {
+          if (c.id === container.id) return false; // Skip itself
+          const { topLeft, bottomRight } = c;
+          return (
+            newContainer.topLeft.x <= bottomRight.x &&
+            newContainer.bottomRight.x >= topLeft.x &&
+            newContainer.topLeft.y <= bottomRight.y &&
+            newContainer.bottomRight.y >= topLeft.y
+          );
+        })
+      );
+    };
 
-    // Call onUpdateUserData with the new template structure
-    onUpdateUserData({ template: updatedTemplate });
+    if (!isConflicting(updatedContainer)) {
+      // Pass the updated container to the parent for updating
+      const updatedTemplate = templateData.map(t =>
+        t.id === templateId
+          ? {
+              ...t,
+              containers: t.containers.map(c =>
+                c.id === container.id ? updatedContainer : c // Update only the modified container
+              ),
+            }
+          : t
+      );
+
+      // Call onUpdateUserData with the new template structure
+      onUpdateUserData({ template: updatedTemplate });
+    }
   };
 
   const onMouseUp = () => {
@@ -187,8 +275,43 @@ const handleDeleteContainer = () => {
 
   onUpdateUserData({ template: updatedTemplate });
 };
+const containerOffsets = {
+  top: { x: 0, y: -6, width: container.width, height: 6 },
+  bottom: { x: 0, y: 6, width: container.width, height: 6 },
+  left: { x: -6, y: 0, width: 6, height: container.height },
+  right: { x: 6, y: 0, width: 6, height: container.height },
+};
 
+const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
+  const offset = containerOffsets[position];
 
+  const newContainer: ContainerData = {
+    id: Date.now(),
+    title: 'New Container',
+    contentId: 1,
+    width: offset.width,
+    height: offset.height,
+    topLeft: {
+      x: container.topLeft.x + offset.x,
+      y: container.topLeft.y + offset.y,
+    },
+    bottomRight: {
+      x: container.topLeft.x + offset.x + offset.width,
+      y: container.topLeft.y + offset.y + offset.height,
+    },
+  };
+
+  const updatedTemplate = templateData.map(t =>
+    t.id === templateId
+      ? {
+          ...t,
+          containers: [...t.containers, newContainer],
+        }
+      : t
+  );
+
+  onUpdateUserData({ template: updatedTemplate });
+};
 
 
   return (
@@ -274,6 +397,79 @@ const handleDeleteContainer = () => {
           </button>
         </>
       )}
+      {isEdit && (
+  <>
+    {/* Top middle button */}
+{isTopMiddleFit  && (
+  <button
+    onClick={() => generateContainer('top')}
+    style={{
+      position: 'fixed',
+      left: `${container.topLeft.x + container.width / 2}vw`,
+      top: `${container.topLeft.y + 10}vh`,
+      transform: 'translate(-50%, -50%)',
+      zIndex: 10,
+      padding: '5px 10px',
+      backgroundColor: 'lightblue',
+    }}
+  >
+    +
+  </button>
+)}
+
+    {/* Bottom middle button */}
+    {isBottomMiddleFit  && (
+    <button
+      onClick={() => generateContainer('bottom')}
+      style={{
+        position: 'fixed',
+        left: `${container.topLeft.x + container.width / 2}vw`,
+        top: `${container.bottomRight.y + 13}vh`,
+        transform: 'translate(-50%, 50%)',
+        zIndex: 10,
+        padding: '5px 10px',
+        backgroundColor: 'lightblue',
+      }}
+    >
+      +
+    </button>
+    )}
+    {/* Left middle button */}
+    {isLeftMiddleFit  && (
+    <button
+       onClick={() => generateContainer('left')}
+      style={{
+        position: 'fixed',
+        left: `${container.topLeft.x-2}vw`,
+        top: `${container.topLeft.y + 13 + container.height / 2}vh`,
+        transform: 'translate(-50%, -50%)',
+        zIndex: 10,
+        padding: '5px 10px',
+        backgroundColor: 'lightblue',
+      }}
+    >
+      +
+    </button>
+    )}
+    {/* Right middle button */}
+    {isRightMiddleFit && (
+    <button
+  onClick={() => generateContainer('right')}
+      style={{
+        position: 'fixed',
+        left: `${container.bottomRight.x }vw`,
+        top: `${container.topLeft.y + 13 + container.height / 2}vh`,
+        transform: 'translate(50%, -50%)',
+        zIndex: 10,
+        padding: '5px 10px',
+        backgroundColor: 'lightblue',
+      }}
+    >
+      +
+    </button>
+    )}
+  </>
+)}
     </div>
   );
 };
