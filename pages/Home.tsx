@@ -77,88 +77,6 @@ export default function Home() {
     localStorage.setItem('Userunitdata', JSON.stringify(userData));
   }, [userData]);
 
-  const handleMouseDownWidth = () => {
-    if (isEdit) setIsDraggingWidth(true);
-  };
-
-  const handleMouseDownHeight = () => {
-    if (isEdit) setIsDraggingHeight(true);
-  };
-
-  const handleMouseMove = (e: MouseEvent) => {
-    const container = userData.template[0]?.containers[0];
-    if (!container) return; 
-
-    let newWidth = container.width;
-    let newHeight = container.height;
-
-    // Get the parent container's dimensions
-    const parentContainer = document.querySelector('div[style*="display: flex"]'); 
-    const parentWidth = parentContainer?.clientWidth || window.innerWidth;
-    const parentHeight = parentContainer?.clientHeight || window.innerHeight;
-
-    if (isDraggingWidth) {
-      newWidth = (e.clientX / parentWidth) * 100; // Calculating new width in percentage of parent width
-      if (newWidth >= MIN_WIDTH && newWidth <= MAX_WIDTH) {
-        const updatedContainer = {
-          ...container,
-          width: newWidth,
-          bottomRight: { x: newWidth, y: container.bottomRight.y }, // Update bottom-right x
-        };
-
-        setUserData(prevState => ({
-          ...prevState,
-          template: prevState.template.map(template =>
-            template.id === 1
-              ? {
-                  ...template,
-                  containers: [updatedContainer], // Update container array
-                }
-              : template
-          ),
-        }));
-      }
-    }
-
-    if (isDraggingHeight) {
-      newHeight = (e.clientY / parentHeight) * 100; // Calculating new height in percentage of parent height
-      if (newHeight >= MIN_HEIGHT && newHeight <= MAX_HEIGHT) {
-        const updatedContainer = {
-          ...container,
-          height: newHeight,
-          bottomRight: { x: container.bottomRight.x, y: newHeight }, // Update bottom-right y
-        };
-
-        setUserData(prevState => ({
-          ...prevState,
-          template: prevState.template.map(template =>
-            template.id === 1
-              ? {
-                  ...template,
-                  containers: [updatedContainer], // Update container array
-                }
-              : template
-          ),
-        }));
-      }
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDraggingWidth(false);
-    setIsDraggingHeight(false);
-  };
-
-  useEffect(() => {
-    if (isDraggingWidth || isDraggingHeight) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-    }
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDraggingWidth, isDraggingHeight]);
 
   const toggleEditMode = () => {
     setIsEdit(prev => !prev);
@@ -262,8 +180,6 @@ export default function Home() {
             contentItems={userData.content}
             isEdit={isEdit}
             onContentIdChange={handleContentIdChange}
-            onMouseDownWidth={handleMouseDownWidth}
-            onMouseDownHeight={handleMouseDownHeight}
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
           />
         ))
