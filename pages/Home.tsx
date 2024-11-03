@@ -129,6 +129,49 @@ export default function Home() {
     setIsModalOpen(!isModalOpen);
   };
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+const importData = async () => {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.json';
+  
+  fileInput.onchange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const text = await file.text();
+      try {
+        const importedData = JSON.parse(text);
+        // Ensure the structure of imported data is valid before updating the state
+        if (importedData && importedData.template && importedData.content) {
+          setUserData(importedData);
+          localStorage.setItem('Userunitdata', JSON.stringify(importedData));
+        } else {
+          alert("Invalid data format.");
+        }
+      } catch (error) {
+        console.error("Error parsing JSON: ", error);
+        alert("Failed to import data. Please check the file format.");
+      }
+    }
+  };
+
+  fileInput.click();
+};
+const downloadData = () => {
+  const dataStr = JSON.stringify(userData, null, 2); 
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'Userunitdata.json'; 
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url); // Clean up the URL object
+};
+
   return (
     <main>
       <div>
@@ -169,6 +212,8 @@ export default function Home() {
       </option>
     ))}
   </select>
+         <Icon  icon="mdi:import" width="40" onClick={importData} />
+         <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
         </div>
         <hr className="divider" />
 
