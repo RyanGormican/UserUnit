@@ -32,10 +32,12 @@ interface ContainerProps {
     bottomRight: { x: number; y: number };
   };
   contentItems: ContentItem[];
+  containerId: number;
   isEdit: boolean;
   onContentIdChange: (containerId: number, newContentId: number) => void;
   onUpdateUserData: (newData: any) => void; 
 }
+
 
 
 const Container: React.FC<ContainerProps> = ({
