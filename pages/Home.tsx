@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import React, { useState, useEffect } from 'react';
 import Container from '../src/app/Container';
 import Content from '../src/app/Content';
+import Template from '../src/app/Template';
 import '/src/app/globals.css';
 
 interface ContainerData {
@@ -55,6 +56,7 @@ export default function Home() {
         template: [
           {
             id: 1,
+            name:'Sample Template 1',
             containers: [
               { id: 1, title: 'Sample', contentId: 1, width: 50, height: 87, topLeft: { x: 0, y: 0 }, bottomRight: { x: 50, y: 87 } },
             ],
@@ -224,43 +226,67 @@ export default function Home() {
         <div className="buttons flex">
           <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} />
           <Icon icon="subway:write" width="40" onClick={() => toggleMode('Content')} />
+          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} width="40" onClick={toggleEditMode} />
+            {/* Template Selector */}
+
+  <select
+    id="template-selector"
+    value={currentTemplateId !== null ? currentTemplateId : ''}
+    onChange={(e) => setCurrentTemplateId(Number(e.target.value))}
+    style={{width:'10%'}}
+  >
+    <option value="" disabled>Select a Template</option>
+    {userData.template.map(template => (
+      <option key={template.id} value={template.id}>
+        {template.name}
+      </option>
+    ))}
+  </select>
         </div>
         <hr className="divider" />
 
-        {currentMode === 'Container' && (
-          <div style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            {userData.template.length > 0 && userData.template.map(template => (
-              <React.Fragment key={template.id}>
-                {currentTemplateId === null && setCurrentTemplateId(template.id)} {/* Set the current template if not set */}
-                {template.containers.map(container => (
-                  <Container
-                    key={container.id}
-                    template={template} 
-                    templateid={template.id} 
-                    container={container} 
-                    containerid={container.id}
-                    contentItems={userData.content}
-                    isEdit={isEdit}
-                    onContentIdChange={handleContentIdChange}
-                    onMouseDownWidth={handleMouseDownWidth}
-                    onMouseDownHeight={handleMouseDownHeight}
-                    onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))} 
-                  />
-                ))}
-              </React.Fragment>
-            ))}
-            {currentTemplateId !== null && userData.template.find(template => template.id === currentTemplateId)?.containers.length === 0 && (
-              <button onClick={addContainer} style={{ marginTop: '20px',  padding: '10px',  backgroundColor: 'lightblue'  }}>
-                ADD CONTAINER
-              </button>
-            )}
-          </div>
-        )}
+
+{currentMode === 'Container' && (
+  <div style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+    {currentTemplateId !== null && userData.template
+      .filter(template => template.id === currentTemplateId) // Filter to get only the current template
+      .map(template => (
+        template.containers.map(container => (
+          <Container
+            key={container.id}
+            templateData={userData.template}
+            templateId={template.id}
+            container={container}
+            containerId={container.id}
+            contentItems={userData.content}
+            isEdit={isEdit}
+            onContentIdChange={handleContentIdChange}
+            onMouseDownWidth={handleMouseDownWidth}
+            onMouseDownHeight={handleMouseDownHeight}
+            onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
+          />
+        ))
+      ))
+    }
+    {currentTemplateId !== null && userData.template.find(template => template.id === currentTemplateId)?.containers.length === 0 && (
+      <button onClick={addContainer} style={{ marginTop: '20px', padding: '10px', backgroundColor: 'lightblue' }}>
+        ADD CONTAINER
+      </button>
+    )}
+  </div>
+)}
+
 
         {currentMode === 'Content' && (
           <Content
             contentItems={userData.content}
+            onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
+          />
+        )}
+         {currentMode === 'Template' && (
+          <Template
+            templateItems={userData.template}
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
           />
         )}

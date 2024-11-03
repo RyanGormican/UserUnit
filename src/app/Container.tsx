@@ -15,31 +15,27 @@ interface ContainerProps {
     contentId: number;
     width: number;
     height: number;
-    topLeft: { x: number; y: number }; 
-    bottomRight: { x: number; y: number }; 
+    topLeft: { x: number; y: number };
+    bottomRight: { x: number; y: number };
   };
   contentItems: ContentItem[];
   isEdit: boolean;
   onContentIdChange: (containerId: number, newContentId: number) => void;
-  onMouseDownWidth: () => void;
-  onMouseDownHeight: () => void;
   onUpdateUserData: (newData: any) => void; // For updating the user data
 }
 
 const Container: React.FC<ContainerProps> = ({
   templateId,
+  templateData,
   container,
-  template,
-  containerid,
+  containerId,
   contentItems,
   isEdit,
   onContentIdChange,
-  onMouseDownWidth,
-  onMouseDownHeight,
   onUpdateUserData,
 }) => {
   const contentItem = Array.isArray(contentItems)
-    ? contentItems.find(content => content.id === container.contentId) 
+    ? contentItems.find(content => content.id === container.contentId)
     : null;
 
   const minWidth = 6; // minimum width in vw
@@ -47,97 +43,135 @@ const Container: React.FC<ContainerProps> = ({
   const maxWidth = 100; // maximum width in vw
   const maxHeight = 87; // maximum height in vh
 
-  const handleDragTopLeft = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startY = e.clientY;
+const handleDragTopLeft = (e: React.MouseEvent) => {
+  e.preventDefault();
+  const startX = e.clientX;
+  const startY = e.clientY;
 
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
+  const onMouseMove = (moveEvent: MouseEvent) => {
+    const dx = moveEvent.clientX - startX;
+    const dy = moveEvent.clientY - startY;
 
-      // Calculate new top left position and width/height
-      const newTopLeft = {
-        x: Math.max(container.topLeft.x + (dx / window.innerWidth) * 100, 0), // Prevent negative X
-        y: Math.max(container.topLeft.y + (dy / window.innerHeight) * 100, 0), // Prevent negative Y
-      };
-
-      const newWidth = Math.max(Math.min(container.width - (dx / window.innerWidth) * 100, maxWidth), minWidth); // Decrease width
-      const newHeight = Math.max(Math.min(container.height - (dy / window.innerHeight) * 100, maxHeight), minHeight); // Decrease height
-
-      // Create updated container
-      const updatedContainer = {
-        ...container,
-        topLeft: newTopLeft,
-        width: newWidth,
-        height: newHeight,
-      };
-
-      // Create updated template with the new container state
-      onUpdateUserData({ template: [{ id: templateId, containers: [updatedContainer] }] });
+    // Calculate new top left position and width/height
+    const newTopLeft = {
+      x: Math.max(container.topLeft.x + (dx / window.innerWidth) * 100, 0), // Prevent negative X
+      y: Math.max(container.topLeft.y + (dy / window.innerHeight) * 100, 0), // Prevent negative Y
     };
 
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
+    const newWidth = Math.max(Math.min(container.width - (dx / window.innerWidth) * 100, maxWidth), minWidth); // Decrease width
+    const newHeight = Math.max(Math.min(container.height - (dy / window.innerHeight) * 100, maxHeight), minHeight); // Decrease height
+
+    // Create updated container
+    const updatedContainer = {
+      ...container,
+      topLeft: newTopLeft,
+      width: newWidth,
+      height: newHeight,
     };
 
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    // Pass the updated container to the parent for updating
+    const updatedTemplate = templateData.map(t =>
+      t.id === templateId
+        ? {
+            ...t,
+            containers: t.containers.map(c =>
+              c.id === container.id ? updatedContainer : c // Update only the modified container
+            ),
+          }
+        : t
+    );
+
+ 
+
+    // Call onUpdateUserData with the new template structure
+    onUpdateUserData({ template: updatedTemplate });
   };
 
-  const handleDragBottomRight = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startY = e.clientY;
-
-    const onMouseMove = (moveEvent: MouseEvent) => {
-      const dx = moveEvent.clientX - startX;
-      const dy = moveEvent.clientY - startY;
-
-      // Calculate new bottom right position and width/height
-      const newBottomRight = {
-        x: Math.min(container.bottomRight.x + (dx / window.innerWidth) * 100, maxWidth), // Prevent exceeding max width
-        y: Math.min(container.bottomRight.y + (dy / window.innerHeight) * 100, maxHeight), // Prevent exceeding max height
-      };
-
-      const newWidth = Math.max(Math.min(newBottomRight.x - container.topLeft.x, maxWidth), minWidth); // Update width
-      const newHeight = Math.max(Math.min(newBottomRight.y - container.topLeft.y, maxHeight), minHeight); // Update height
-
-      // Create updated container
-      const updatedContainer = {
-        ...container,
-        bottomRight: newBottomRight,
-        width: newWidth,
-        height: newHeight,
-      };
-
-      onUpdateUserData({ template: [{ id: templateId, containers: [updatedContainer] }] });
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
   };
-    const handleDeleteContainer = () => {
-    // Filter out the current container by its id
-    const updatedTemplate = {
-      id: templateId,
-      containers: template.containers.filter(c => c.id !== container.id),
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+
+const handleDragBottomRight = (e: React.MouseEvent) => {
+  e.preventDefault();
+  const startX = e.clientX;
+  const startY = e.clientY;
+
+  const onMouseMove = (moveEvent: MouseEvent) => {
+    const dx = moveEvent.clientX - startX;
+    const dy = moveEvent.clientY - startY;
+
+    // Calculate new bottom right position and width/height
+    const newBottomRight = {
+      x: Math.min(container.bottomRight.x + (dx / window.innerWidth) * 100, maxWidth), // Prevent exceeding max width
+      y: Math.min(container.bottomRight.y + (dy / window.innerHeight) * 100, maxHeight), // Prevent exceeding max height
     };
-    
-    onUpdateUserData({ template: [updatedTemplate] });
+
+    const newWidth = Math.max(Math.min(newBottomRight.x - container.topLeft.x, maxWidth), minWidth); // Update width
+    const newHeight = Math.max(Math.min(newBottomRight.y - container.topLeft.y, maxHeight), minHeight); // Update height
+
+    // Create updated container
+    const updatedContainer = {
+      ...container,
+      bottomRight: newBottomRight,
+      width: newWidth,
+      height: newHeight,
+    };
+
+    // Pass the updated container to the parent for updating
+    const updatedTemplate = templateData.map(t =>
+      t.id === templateId
+        ? {
+            ...t,
+            containers: t.containers.map(c =>
+              c.id === container.id ? updatedContainer : c // Update only the modified container
+            ),
+          }
+        : t
+    );
+
+
+    // Call onUpdateUserData with the new template structure
+    onUpdateUserData({ template: updatedTemplate });
   };
+
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+
+
+const handleDeleteContainer = () => {
+
+  const updatedTemplate = templateData.map(t =>
+    t.id === templateId
+      ? {
+          ...t,
+          containers: t.containers.filter(c => c.id !== container.id), 
+        }
+      : t
+  );
+
+  onUpdateUserData({ template: updatedTemplate });
+};
+
+
+
+
   return (
     <div
       style={{
         position: 'absolute',
-        left: `${container.topLeft.x}vw`, 
-        top: `${container.topLeft.y + 13}vh`, 
+        left: `${container.topLeft.x}vw`,
+        top: `${container.topLeft.y + 13}vh`,
         width: `${container.width}vw`,
         height: `${container.height}vh`,
         backgroundColor: '#f0f0f0',
@@ -149,7 +183,7 @@ const Container: React.FC<ContainerProps> = ({
       {isEdit && (
         <select
           value={container.contentId}
-          onChange={(e) => onContentIdChange(container.id, Number(e.target.value))}
+          onChange={(e) => onContentIdChange(container.id, Number(e.target.value))} // Correctly update contentId
           style={{
             width: '25%',
             marginTop: '5px',
@@ -176,8 +210,8 @@ const Container: React.FC<ContainerProps> = ({
             onMouseDown={handleDragTopLeft}
             style={{
               position: 'fixed',
-              left: `${container.topLeft.x}vw`, 
-              top: `${container.topLeft.y + 13}vh`, 
+              left: `${container.topLeft.x}vw`,
+              top: `${container.topLeft.y + 13}vh`,
               zIndex: 10,
               padding: '5px 10px',
               backgroundColor: 'lightblue',
@@ -190,8 +224,8 @@ const Container: React.FC<ContainerProps> = ({
             onMouseDown={handleDragBottomRight}
             style={{
               position: 'fixed',
-              left: `${container.bottomRight.x - 2}vw`, 
-              top: `${container.bottomRight.y + 10}vh`, 
+              left: `${container.bottomRight.x - 2}vw`,
+              top: `${container.bottomRight.y + 10}vh`,
               zIndex: 10,
               padding: '5px 10px',
               backgroundColor: 'lightblue',
@@ -199,20 +233,20 @@ const Container: React.FC<ContainerProps> = ({
           >
             <Icon icon="mdi:arrow-bottom-right" width="20" />
           </button>
-<button
-    onMouseDown={handleDeleteContainer}
-  style={{
-    position: 'fixed',
-    left: `${container.bottomRight.x - 1 - container.width/2}vw`, 
-    top: `${container.bottomRight.y + 10}vh`, 
-    zIndex: 10,
-    padding: '5px 10px',
-    backgroundColor: 'lightblue',
-  }}
->
-  <Icon icon="mdi:trash-can" width="20" />
-</button>
-
+          
+          <button
+            onClick={handleDeleteContainer}
+            style={{
+              position: 'fixed',
+              left: `${container.bottomRight.x - 1 - container.width / 2}vw`,
+              top: `${container.bottomRight.y + 10}vh`,
+              zIndex: 10,
+              padding: '5px 10px',
+              backgroundColor: 'lightblue',
+            }}
+          >
+            <Icon icon="mdi:trash-can" width="20" />
+          </button>
         </>
       )}
     </div>
