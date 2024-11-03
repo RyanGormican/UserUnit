@@ -135,9 +135,10 @@ const importData = async () => {
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = '.json';
-  
-  fileInput.onchange = async (event) => {
-    const file = event.target.files[0];
+
+  fileInput.onchange = async (event: Event) => {
+    const target = event.target as HTMLInputElement; 
+    const file = target.files?.[0]; 
     if (file) {
       const text = await file.text();
       try {
@@ -158,6 +159,7 @@ const importData = async () => {
 
   fileInput.click();
 };
+
 const downloadData = () => {
   const dataStr = JSON.stringify(userData, null, 2); 
   const blob = new Blob([dataStr], { type: 'application/json' });
