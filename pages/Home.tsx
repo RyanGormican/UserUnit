@@ -5,7 +5,7 @@ import Content from '../src/app/Content';
 import Template from '../src/app/Template';
 import '/src/app/globals.css';
 import Feedback from '../src/app/components/Feedback/Feedback';
-
+import '/src/app/components/Feedback/feedback.css';
 interface ContainerData {
   id: number;
   title: string;
