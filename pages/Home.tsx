@@ -5,6 +5,7 @@ import Content from '../src/app/Content';
 import Template from '../src/app/Template';
 import '../src/app/globals.css';
 import Feedback from '../src/app/components/Feedback/Feedback';
+import html2canvas from 'html2canvas';
 interface ContainerData {
   id: number;
   title: string;
@@ -167,12 +168,42 @@ const downloadData = () => {
   
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'Userunitdata.json'; 
+  link.download = 'UserUnitdata.json'; 
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url); // Clean up the URL object
 };
+
+
+
+const takeSnapshot = async () => {
+  const containerElement = document.querySelector('.container-selector') as HTMLElement | null;
+
+  if (containerElement) {
+    try {
+      // Use html2canvas to take a snapshot of the div
+      const canvas = await html2canvas(containerElement);
+
+      // Convert the canvas to a data URL
+      const dataURL = canvas.toDataURL('image/png');
+
+      // Create a download link and trigger the download
+      const link = document.createElement('a');
+      link.href = dataURL;
+      link.download = 'UserUnitSnapshot.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up
+    } catch (error) {
+      console.error('Error taking snapshot:', error);
+    }
+  } else {
+    console.error('Container element not found');
+  }
+};
+
+
 
   return (
     <main>
@@ -216,12 +247,15 @@ const downloadData = () => {
   </select>
          <Icon  icon="mdi:import" width="40" onClick={importData} />
          <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
+         {currentMode === 'Container' && (
+         <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
+         )}
         </div>
         <hr className="divider" />
 
 
 {currentMode === 'Container' && (
-  <div style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+  <div  className="container-selector" style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
     {currentTemplateId !== null && userData.template
       .filter(template => template.id === currentTemplateId) // Filter to get only the current template
       .map(template => (
