@@ -14,8 +14,9 @@ interface ContainerData {
   contentId: number;
   width: number;
   height: number;
-  topLeft: { x: number; y: number }; // Store top-left position
-  bottomRight: { x: number; y: number }; // Store bottom-right position
+  topLeft: { x: number; y: number };
+  bottomRight: { x: number; y: number }; 
+  color?: string;
 }
 
 interface Template {

@@ -9,6 +9,7 @@ interface ContainerData {
   height: number;
   topLeft: { x: number; y: number };
   bottomRight: { x: number; y: number };
+  color?: string;
 }
 
 interface TemplateItem {
