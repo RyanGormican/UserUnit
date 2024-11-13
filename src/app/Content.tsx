@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+
 interface ContentItem {
   id: number;
   title: string;
@@ -27,7 +28,8 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
     const newContentItem = { id: newId, title: '', text: '' };
     const updatedContentItems = [...localContentItems, newContentItem];
     setLocalContentItems(updatedContentItems);
-    setCurrentPage(totalPages);
+    const newPage= Math.ceil(updatedContentItems.length / ITEMS_PER_PAGE);
+    setCurrentPage(newPage);
     onUpdateUserData({ content: updatedContentItems });
   };
 
@@ -39,6 +41,14 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
     onUpdateUserData({ content: updatedContentItems });
   };
 
+  const deleteContentItem = (id: number) => {
+    const updatedContentItems = localContentItems.filter(item => item.id !== id);
+    setLocalContentItems(updatedContentItems);
+    onUpdateUserData({ content: updatedContentItems });
+    const totalPages = Math.ceil(updatedContentItems.length / ITEMS_PER_PAGE);
+    setCurrentPage(totalPages);
+  };
+
   const filteredContentItems = localContentItems.filter(item =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -48,11 +58,13 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
 
   // Slice the array for the current page
   const paginatedItems = filteredContentItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-useEffect(() => {
-  if (currentPage > totalPages) {
-    setCurrentPage(1);
-  }
-}, [filteredContentItems, totalPages, currentPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [filteredContentItems, totalPages, currentPage]);
+
   return (
     <div style={{ height: '100%', backgroundColor: '#e0e0e0', padding: '20px' }}>
       <h2 style={{ fontSize: '2vh' }}>Edit Container Text</h2>
@@ -72,26 +84,38 @@ useEffect(() => {
       </div>
 
       {paginatedItems.map(contentItem => (
-        <div key={contentItem.id} style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            value={contentItem.title}
-            onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
-            style={{ width: '100%', padding: '10px', marginBottom: '5px' }}
-            placeholder="Title"
-          />
-          <input
-            type="text"
-            value={contentItem.text}
-            onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
-            style={{ width: '100%', padding: '10px' }}
-            placeholder="Content"
-          />
-        </div>
+      <div key={contentItem.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+  <input
+    type="text"
+    value={contentItem.title}
+    onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
+    style={{ width: '80%', padding: '10px', marginBottom: '5px', borderRight: '1px solid grey',  }}
+    placeholder="Title"
+  />
+  <input
+    type="text"
+    value={contentItem.text}
+    onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
+    style={{ width: '80%', padding: '10px', marginBottom: '5px', borderLeft: '1px solid grey' }}
+    placeholder="Content"
+  />
+  <button
+    onClick={() => deleteContentItem(contentItem.id)}
+    style={{
+      background: 'transparent',
+      border: 'none',
+      cursor: 'pointer',
+      padding: '0',
+      marginLeft: '10px', 
+    }}
+  >
+    <Icon icon="mdi:trash" width="40"  />
+  </button>
+</div>
       ))}
 
       {/* Pagination controls */}
-        {totalPages > 1 && (
+      {totalPages > 1 && (
         <div style={{ marginTop: '20px', display: 'flex', alignItems: 'center' }}>
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}

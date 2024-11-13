@@ -247,9 +247,7 @@ const takeSnapshot = async () => {
   </select>
          <Icon  icon="mdi:import" width="40" onClick={importData} />
          <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
-         {currentMode === 'Container' && (
          <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
-         )}
         </div>
         <hr className="divider" />
 
@@ -293,6 +291,7 @@ const takeSnapshot = async () => {
           <Template
             templateItems={userData.template}
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
+            setCurrentTemplateId={setCurrentTemplateId}
           />
         )}
       </div>
