@@ -4,6 +4,7 @@ import Container from '../src/app/Container';
 import Content from '../src/app/Content';
 import Template from '../src/app/Template';
 import TemplateDetail from '../src/app/TemplateDetail';
+import HelpModal from '../src/app/HelpModal'; 
 import '../src/app/globals.css';
 import Feedback from '../src/app/components/Feedback/Feedback';
 import html2canvas from 'html2canvas';
@@ -46,10 +47,14 @@ export default function Home() {
   });
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [currentMode, setCurrentMode] = useState<string>('Container');
-  const [currentTemplateId, setCurrentTemplateId] = useState<number | null>(null); // State for current template
+  const [currentTemplateId, setCurrentTemplateId] = useState<number | null>(null); 
   const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
-
+  const [helpModal, setHelpModal] = useState<boolean>(false); 
+  
+  const toggleHelpModal = () => {
+    setHelpModal(prev => !prev); 
+  };
   useEffect(() => {
     const storedData = localStorage.getItem('Userunitdata');
     if (storedData) {
@@ -61,7 +66,7 @@ export default function Home() {
             id: 1,
             name:'Sample Template 1',
             containers: [
-              { id: 1, title: 'Sample', contentId: 1, width: 50, height: 87, topLeft: { x: 0, y: 0 }, bottomRight: { x: 50, y: 87 } },
+              { id: 1, title: 'Sample', contentId: 1, width: 50, height: 87, topLeft: { x: 0, y: 0 }, bottomRight: { x: 50, y: 87 }, color: '#f0f0f0', },
             ],
           },
         ],
@@ -112,6 +117,7 @@ export default function Home() {
         height: 87,
         topLeft: { x: 0, y: 0 },
         bottomRight: { x: 50, y: 87 },
+        color: '#f0f0f0',
       };
 
       setUserData(prevState => ({
@@ -249,8 +255,7 @@ const takeSnapshot = async () => {
          <Icon  icon="mdi:import" width="40" onClick={importData} />
          <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
          <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
-         
-        <Icon icon="ph:question-fill" width="40" onClick={() => toggleMode('Template')} style={{ marginLeft: 'auto' }}/>
+         <Icon icon="ph:question-fill" width="40" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }}/>
         </div>
         <hr className="divider" />
 
@@ -305,6 +310,7 @@ const takeSnapshot = async () => {
             templateId={currentTemplateId}
           />
         )}
+         <HelpModal isOpen={helpModal} onClose={toggleHelpModal} />
       </div>
     </main>
   );
