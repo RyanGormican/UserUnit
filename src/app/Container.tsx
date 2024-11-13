@@ -300,6 +300,7 @@ const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
     contentId: 1,
     width: offset.width,
     height: offset.height,
+    color: '#f0f0f0',
     topLeft: {
       x: container.topLeft.x + offset.x,
       y: container.topLeft.y + offset.y,
@@ -331,7 +332,7 @@ const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
         top: `${container.topLeft.y + 13}vh`,
         width: `${container.width}vw`,
         height: `${container.height}vh`,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: container.color ? container.color : '#f0f0f0', 
         opacity: isEdit ? 1 : 0.6,
         overflowY: 'auto',
         margin: 0,

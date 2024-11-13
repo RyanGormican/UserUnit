@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Container from '../src/app/Container';
 import Content from '../src/app/Content';
 import Template from '../src/app/Template';
+import TemplateDetail from '../src/app/TemplateDetail';
 import '../src/app/globals.css';
 import Feedback from '../src/app/components/Feedback/Feedback';
 import html2canvas from 'html2canvas';
@@ -229,9 +230,9 @@ const takeSnapshot = async () => {
           <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} />
           <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} />
           <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} />
+          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} width="40" onClick={toggleEditMode} />
             {/* Template Selector */}
-
   <select
     id="template-selector"
     value={currentTemplateId !== null ? currentTemplateId : ''}
@@ -248,6 +249,8 @@ const takeSnapshot = async () => {
          <Icon  icon="mdi:import" width="40" onClick={importData} />
          <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
          <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
+         
+        <Icon icon="ph:question-fill" width="40" onClick={() => toggleMode('Template')} style={{ marginLeft: 'auto' }}/>
         </div>
         <hr className="divider" />
 
@@ -292,6 +295,14 @@ const takeSnapshot = async () => {
             templateItems={userData.template}
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
             setCurrentTemplateId={setCurrentTemplateId}
+          />
+        )}
+            {currentMode === 'TemplateDetail' && (
+          <TemplateDetail
+            templateItems={userData.template}
+            onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
+            setCurrentTemplateId={setCurrentTemplateId}
+            templateId={currentTemplateId}
           />
         )}
       </div>
