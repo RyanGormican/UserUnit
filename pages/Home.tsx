@@ -304,12 +304,16 @@ const takeSnapshot = async () => {
           />
         )}
             {currentMode === 'TemplateDetail' && (
+            <div>
+            {currentTemplateId !== null && (
           <TemplateDetail
             templateItems={userData.template}
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
             setCurrentTemplateId={setCurrentTemplateId}
             templateId={currentTemplateId}
           />
+          )}
+          </div>
         )}
          <HelpModal isOpen={helpModal} onClose={toggleHelpModal} />
       </div>
