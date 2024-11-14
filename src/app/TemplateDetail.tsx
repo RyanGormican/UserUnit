@@ -83,7 +83,7 @@ const TemplateDetail: React.FC<TemplateProps> = ({
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
                     {matchingContent ? (
                        <span style={{ color: 'black' }}>
-                        {matchingContent.title.trim() === '' ? 'Content With Empty Title' : matchingContent.title}
+                        {matchingContent.title.trim() === '' ? 'Content With an Empty Title' : matchingContent.title}
                        </span>
                     ) : (
                       <span style={{ color: 'red' }}>No Content Selected</span>
