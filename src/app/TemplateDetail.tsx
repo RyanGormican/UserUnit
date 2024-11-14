@@ -12,6 +12,12 @@ interface ContainerData {
   color?: string; 
 }
 
+interface ContentItem {
+  id: number;
+  title: string;
+  text: string;
+}
+
 interface TemplateItem {
   id: number;
   name: string;
@@ -23,13 +29,15 @@ interface TemplateProps {
   onUpdateUserData: (newData: Partial<{ template: TemplateItem[] }>) => void;
   setCurrentTemplateId: (id: number) => void;
   templateId: number;
+  contentItems: ContentItem[]; 
 }
 
 const TemplateDetail: React.FC<TemplateProps> = ({
   templateItems,
   onUpdateUserData,
   setCurrentTemplateId,
-  templateId
+  templateId,
+  contentItems
 }) => {
   const [currentTemplate, setCurrentTemplate] = useState<TemplateItem | null>(null);
 
@@ -60,25 +68,42 @@ const TemplateDetail: React.FC<TemplateProps> = ({
       <div>
         <h3>Containers</h3>
         {currentTemplate.containers.length > 0 ? (
-          currentTemplate.containers.map(container => (
-            <div key={container.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
-                <strong>{container.title}</strong>
-                <p>
-                  Top Left: ({container.topLeft.x}, {container.topLeft.y}) | 
-                  Bottom Right: ({container.bottomRight.x}, {container.bottomRight.y})
-                </p>
-              </div>
-              <div style={{ marginLeft: '10px' }}>
-                {/* Color Picker */}
-                <input
-                  type="color"
-                  value={container.color || '#f0f0f0'}
-                  onChange={(e) => handleColorChange(container.id, e.target.value)}
-                />
-              </div>
+          <div style={{ display: 'table', width: '100%' }}>
+            <div style={{ display: 'table-row', fontWeight: 'bold' }}>
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content of Container</div>
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Position</div>
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Color</div>
             </div>
-          ))
+            {currentTemplate.containers.map(container => {
+              // Find the matching contentItem by contentId
+              const matchingContent = contentItems.find(content => content.id === container.contentId);
+              return (
+                <div key={container.id} style={{ display: 'table-row' }}>
+                
+                  <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
+                    {matchingContent ? (
+                       <span style={{ color: 'black' }}>
+                        {matchingContent.title.trim() === '' ? 'Content With Empty Title' : matchingContent.title}
+                       </span>
+                    ) : (
+                      <span style={{ color: 'red' }}>No Content Selected</span>
+                    )}
+                  </div>
+                  <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
+                    Top Left: ({container.topLeft.x}, {container.topLeft.y}) | 
+                    Bottom Right: ({container.bottomRight.x}, {container.bottomRight.y})
+                  </div>
+                  <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
+                    <input
+                      type="color"
+                      value={container.color || '#f0f0f0'}
+                      onChange={(e) => handleColorChange(container.id, e.target.value)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         ) : (
           <p>No containers found for this template.</p>
         )}
@@ -86,5 +111,6 @@ const TemplateDetail: React.FC<TemplateProps> = ({
     </div>
   );
 };
+
 
 export default TemplateDetail;

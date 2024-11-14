@@ -234,10 +234,10 @@ const takeSnapshot = async () => {
         <div className="title">UserUnit</div>
         <hr className="divider" />
         <div className="buttons flex">
-          <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} />
-          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} />
-          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} />
-          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} />
+          <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} style={{ color: currentMode === 'Container' ? 'lightblue' : 'black' }} />
+          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} style={{ color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
+          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} style={{ color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
+          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} style={{ color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} width="40" onClick={toggleEditMode} />
             {/* Template Selector */}
   <select
@@ -256,7 +256,9 @@ const takeSnapshot = async () => {
          <Icon  icon="mdi:import" width="40" onClick={importData} />
          <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
          <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
+         <span className="flex" style={{marginLeft:'auto' }}>
          <Icon icon="ph:question-fill" width="40" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }}/>
+         </span>
         </div>
         <hr className="divider" />
 
@@ -311,6 +313,7 @@ const takeSnapshot = async () => {
             onUpdateUserData={(newData) => setUserData(prevState => ({ ...prevState, ...newData }))}
             setCurrentTemplateId={setCurrentTemplateId}
             templateId={currentTemplateId}
+            contentItems={userData.content}
           />
           )}
           </div>

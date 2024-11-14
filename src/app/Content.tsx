@@ -67,7 +67,7 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
 
   return (
     <div style={{ height: '100%', backgroundColor: '#e0e0e0', padding: '20px' }}>
-      <h2 style={{ fontSize: '2vh' }}>Edit Container Text</h2>
+      <h2 style={{ fontSize: '2vh' }}>Manage Content Items</h2>
       <div>
         <input
           type="text"
