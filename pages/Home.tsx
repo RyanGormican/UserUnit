@@ -53,7 +53,7 @@ export default function Home() {
   const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
   const [helpModal, setHelpModal] = useState<boolean>(false); 
-  const [tabSelection, setTabeSelection] = useState('general');
+  const [tabSelection, setTabSelection] = useState('general');
   const toggleHelpModal = () => {
     setIsEdit(false);
     setHelpModal(prev => !prev); 
@@ -249,7 +249,7 @@ const takeSnapshot = async () => {
         <hr className="divider" />
         <div className="buttons flex">
           <Icon icon="icon-park-outline:page" onClick={() => toggleMode('Container')} style={{height: '4.4vh',width:'2vw', color: currentMode === 'Container' ? 'lightblue' : 'black' }} />
-          <Icon icon="ic:outline-list" " onClick={() => toggleMode('Content')} style={{ height: '4.4vh',width:'2vw', color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
+          <Icon icon="ic:outline-list" onClick={() => toggleMode('Content')} style={{ height: '4.4vh',width:'2vw', color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
           <Icon icon="lucide:book-template" onClick={() => toggleMode('Template')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
           <Icon icon="icon-park-outline:page-template"  onClick={() => toggleMode('TemplateDetail')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} onClick={toggleEditMode} style={{ height: '4.4vh',width:'2vw',  }}/>
@@ -271,7 +271,7 @@ const takeSnapshot = async () => {
          <Icon  icon="material-symbols:download"  onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
          <Icon  icon="mdi:camera"  onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
          <span className="flex" style={{marginLeft:'auto' }}>
-         <Icon icon="ph:question-fill" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }} style={{ height: '4.4vh',width:'2vw',  }}/>
+         <Icon icon="ph:question-fill" onClick={toggleHelpModal} style={{ marginLeft: 'auto',height: '4.4vh',width:'2vw',  }}/>
          </span>
         </div>
         <hr className="divider" />
