@@ -249,9 +249,9 @@ const takeSnapshot = async () => {
         <hr className="divider" />
         <div className="buttons flex">
           <Icon icon="icon-park-outline:page" onClick={() => toggleMode('Container')} style={{height: '4.4vh',width:'2vw', color: currentMode === 'Container' ? 'lightblue' : 'black' }} />
-          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} style={{ height: '4.4vh',width:'2vw', color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
-          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
-          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
+          <Icon icon="ic:outline-list" " onClick={() => toggleMode('Content')} style={{ height: '4.4vh',width:'2vw', color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
+          <Icon icon="lucide:book-template" onClick={() => toggleMode('Template')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
+          <Icon icon="icon-park-outline:page-template"  onClick={() => toggleMode('TemplateDetail')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
           <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} onClick={toggleEditMode} style={{ height: '4.4vh',width:'2vw',  }}/>
             {/* Template Selector */}
   <select
@@ -267,11 +267,11 @@ const takeSnapshot = async () => {
       </option>
     ))}
   </select>
-         <Icon  icon="mdi:import" width="40" onClick={importData} style={{height: '4.4vh',width:'2vw',  }} />
-         <Icon  icon="material-symbols:download" width="40" onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
-         <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
+         <Icon  icon="mdi:import" onClick={importData} style={{height: '4.4vh',width:'2vw',  }} />
+         <Icon  icon="material-symbols:download"  onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
+         <Icon  icon="mdi:camera"  onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
          <span className="flex" style={{marginLeft:'auto' }}>
-         <Icon icon="ph:question-fill" width="40" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }} style={{ height: '4.4vh',width:'2vw',  }}/>
+         <Icon icon="ph:question-fill" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }} style={{ height: '4.4vh',width:'2vw',  }}/>
          </span>
         </div>
         <hr className="divider" />
