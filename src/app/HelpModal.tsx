@@ -12,7 +12,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
 
   useEffect(() => {
     if (isOpen) {
-      setActiveTab(selectedTab); // Reset active tab when modal is opened
+      setActiveTab(selectedTab ?? 'general'); // Reset active tab when modal is opened
     }
   }, [isOpen, selectedTab]);
 
