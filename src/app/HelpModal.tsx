@@ -8,7 +8,7 @@ interface HelpModalProps {
 }
 
 const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) => {
-  const [activeTab, setActiveTab] = useState<string>(selectedTab);
+  const [activeTab, setActiveTab] = useState<string>(selectedTab ?? 'general');
 
   useEffect(() => {
     if (isOpen) {
