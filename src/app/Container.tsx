@@ -5,7 +5,7 @@ interface ContentItem {
   id: number;
   title: string;
   text: string;
-  type: text;
+  type: string;
 }
 interface ContainerData {
   id: number;
