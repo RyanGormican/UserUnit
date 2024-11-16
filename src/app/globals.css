@@ -28,7 +28,7 @@ body {
 
 }
 .title{
-    font-size:50px;
+    font-size:5.2vh;
     text-align:left;
     padding-left:10%;
 }
@@ -42,6 +42,7 @@ body {
 }
 .buttons {
     min-height:4.4vh;
+    max-height: 4.4vh;
 }
 
 

@@ -5,6 +5,7 @@ interface ContentItem {
   id: number;
   title: string;
   text: string;
+  type: text;
 }
 interface ContainerData {
   id: number;
@@ -326,7 +327,19 @@ const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
   onUpdateUserData({ template: updatedTemplate });
 };
 
-
+const renderContent = contentItem ? (
+  contentItem.type === 'text' ? (
+    <p>{contentItem.text || 'No content available'}</p>
+  ) : contentItem.type === 'image' && contentItem.text ? (
+    <img
+      src={contentItem.text}
+      alt="Content"
+      style={{ width: `${container.width}vw`, height: `${container.height}vh` }}
+    />
+  ) : null
+) : (
+  <p>No content available</p>
+);
   return (
     <div
       style={{
@@ -336,7 +349,7 @@ const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
         width: `${container.width}vw`,
         height: `${container.height}vh`,
         backgroundColor: container.color ? container.color : '#f0f0f0', 
-        opacity: isEdit ? 1 : 0.6,
+        opacity: isEdit ? 0.6 : 1,
         overflowY: 'auto',
         margin: 0,
       }}
@@ -363,7 +376,12 @@ const generateContainer = (position: 'top' | 'bottom' | 'left' | 'right') => {
         </select>
       )}
 
-      <p>{contentItem ? contentItem.text : 'No content available'}</p>
+ 
+
+    {renderContent}
+
+
+
 
       {isEdit && (
         <>

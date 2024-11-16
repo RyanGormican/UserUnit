@@ -29,6 +29,7 @@ interface ContentData {
   id: number;
   title: string;
   text: string;
+  type: string;
 }
 
 interface UserData {
@@ -52,8 +53,9 @@ export default function Home() {
   const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
   const [helpModal, setHelpModal] = useState<boolean>(false); 
-  
+  const [tabSelection, setTabeSelection] = useState('general');
   const toggleHelpModal = () => {
+    setIsEdit(false);
     setHelpModal(prev => !prev); 
   };
   useEffect(() => {
@@ -72,9 +74,9 @@ export default function Home() {
           },
         ],
         content: [
-          { id: 1, title: 'A', text: 'Sample Text 1' },
-          { id: 2, title: 'B', text: 'Sample Text 2' },
-          { id: 3, title: 'C', text: 'Sample Text 3' },
+          { id: 1, title: 'A', text: 'Sample Text 1',type:'text' },
+          { id: 2, title: 'B', text: 'Sample Text 2',type:'text'  },
+          { id: 3, title: 'C', text: 'Sample Text 3',type:'text'  },
         ],
       };
       setUserData(initialData);
@@ -113,7 +115,7 @@ export default function Home() {
       const newContainer: ContainerData = {
         id: Date.now(), 
         title: 'New Container',
-        contentId: 1, 
+        contentId: null, 
         width: 50,
         height: 87,
         topLeft: { x: 0, y: 0 },
@@ -183,6 +185,18 @@ const downloadData = () => {
   URL.revokeObjectURL(url); // Clean up the URL object
 };
 
+useEffect(() => {
+  setUserData((prevState) => {
+    const updatedContent = prevState.content.map((item) => {
+      if (!item.hasOwnProperty('type')) {
+        return { ...item, type: 'text' }; 
+      }
+      return item;
+    });
+
+    return { ...prevState, content: updatedContent }; 
+  });
+}, [userData.content]); 
 
 
 const takeSnapshot = async () => {
@@ -218,27 +232,27 @@ const takeSnapshot = async () => {
       <div>
         <span className='links'>
           <a href="https://www.linkedin.com/in/ryangormican/">
-            <Icon icon="mdi:linkedin" color="#0e76a8" width="60" />
+            <Icon icon="mdi:linkedin" color="#0e76a8" style={{width:'3.13vw', height:'5.56vh'}} />
           </a>
           <a href="https://github.com/RyanGormican/UserUnit">
-            <Icon icon="mdi:github" color="#e8eaea" width="60" />
+            <Icon icon="mdi:github" color="#e8eaea" style={{width:'3.13vw', height:'5.56vh'}} />
           </a>
           <a href="https://ryangormicanportfoliohub.vercel.app/">
-            <Icon icon="teenyicons:computer-outline" color="#199c35" width="60" />
+            <Icon icon="teenyicons:computer-outline" color="#199c35" style={{width:'3.13vw', height:'5.56vh'}} />
           </a>
           <div className="cursor-pointer"  onClick={toggleFeedbackModal}>
-  <Icon icon="material-symbols:feedback" width="60" />
+  <Icon icon="material-symbols:feedback"  style={{width:'3.13vw', height:'5.56vh'}} />
 </div>
         </span>
             {isModalOpen && <Feedback isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />}
         <div className="title">UserUnit</div>
         <hr className="divider" />
         <div className="buttons flex">
-          <Icon icon="icon-park-outline:page" width="40" onClick={() => toggleMode('Container')} style={{ color: currentMode === 'Container' ? 'lightblue' : 'black' }} />
-          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} style={{ color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
-          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} style={{ color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
-          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} style={{ color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
-          <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} width="40" onClick={toggleEditMode} />
+          <Icon icon="icon-park-outline:page" onClick={() => toggleMode('Container')} style={{height: '4.4vh',width:'2vw', color: currentMode === 'Container' ? 'lightblue' : 'black' }} />
+          <Icon icon="ic:outline-list" width="40" onClick={() => toggleMode('Content')} style={{ height: '4.4vh',width:'2vw', color: currentMode === 'Content' ? 'lightblue' : 'black' }} />
+          <Icon icon="lucide:book-template" width="40" onClick={() => toggleMode('Template')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'Template' ? 'lightblue' : 'black' }} />
+          <Icon icon="icon-park-outline:page-template" width="40" onClick={() => toggleMode('TemplateDetail')} style={{ height: '4.4vh',width:'2vw',  color: currentMode === 'TemplateDetail' ? 'lightblue' : 'black' }} />
+          <Icon icon={isEdit ? 'ri:pencil-fill' : 'ri:pencil-line'} onClick={toggleEditMode} style={{ height: '4.4vh',width:'2vw',  }}/>
             {/* Template Selector */}
   <select
     id="template-selector"
@@ -253,11 +267,11 @@ const takeSnapshot = async () => {
       </option>
     ))}
   </select>
-         <Icon  icon="mdi:import" width="40" onClick={importData} />
-         <Icon  icon="material-symbols:download" width="40" onClick={downloadData} />
-         <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} />
+         <Icon  icon="mdi:import" width="40" onClick={importData} style={{height: '4.4vh',width:'2vw',  }} />
+         <Icon  icon="material-symbols:download" width="40" onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
+         <Icon  icon="mdi:camera" width="40" onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
          <span className="flex" style={{marginLeft:'auto' }}>
-         <Icon icon="ph:question-fill" width="40" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }}/>
+         <Icon icon="ph:question-fill" width="40" onClick={toggleHelpModal} style={{ marginLeft: 'auto' }} style={{ height: '4.4vh',width:'2vw',  }}/>
          </span>
         </div>
         <hr className="divider" />
@@ -318,7 +332,7 @@ const takeSnapshot = async () => {
           )}
           </div>
         )}
-         <HelpModal isOpen={helpModal} onClose={toggleHelpModal} />
+         <HelpModal isOpen={helpModal} onClose={toggleHelpModal} selectedTab={tabSelection}/>
       </div>
     </main>
   );

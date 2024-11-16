@@ -16,6 +16,7 @@ interface ContentItem {
   id: number;
   title: string;
   text: string;
+  type: string;  
 }
 
 interface TemplateItem {
@@ -71,7 +72,8 @@ const TemplateDetail: React.FC<TemplateProps> = ({
           <div style={{ display: 'table', width: '100%' }}>
             <div style={{ display: 'table-row', fontWeight: 'bold' }}>
               <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content of Container</div>
-              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Position</div>
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content Type</div> {/* New column header */}
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Relative Template Positioning</div>
               <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Color</div>
             </div>
             {currentTemplate.containers.map(container => {
@@ -79,19 +81,21 @@ const TemplateDetail: React.FC<TemplateProps> = ({
               const matchingContent = contentItems.find(content => content.id === container.contentId);
               return (
                 <div key={container.id} style={{ display: 'table-row' }}>
-                
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
                     {matchingContent ? (
-                       <span style={{ color: 'black' }}>
-                        {matchingContent.title.trim() === '' ? 'Content With an Empty Title' : matchingContent.title}
-                       </span>
+                      <span style={{ color: 'black' }}>
+                        {matchingContent.title.trim() === '' ? 'Content Without a Title' : matchingContent.title}
+                      </span>
                     ) : (
                       <span style={{ color: 'red' }}>No Content Selected</span>
                     )}
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
-                    Top Left: ({container.topLeft.x}, {container.topLeft.y}) | 
-                    Bottom Right: ({container.bottomRight.x}, {container.bottomRight.y})
+               {matchingContent ? matchingContent.type.charAt(0).toUpperCase() + matchingContent.type.slice(1) : 'No Content Selected'}
+                  </div>
+                  <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
+                    Top Left: ({container.topLeft.x.toFixed(2)}, {container.topLeft.y.toFixed(2)}) | 
+                    Bottom Right: ({container.bottomRight.x.toFixed(2)}, {container.bottomRight.y.toFixed(2)})
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
                     <input
@@ -111,6 +115,5 @@ const TemplateDetail: React.FC<TemplateProps> = ({
     </div>
   );
 };
-
 
 export default TemplateDetail;

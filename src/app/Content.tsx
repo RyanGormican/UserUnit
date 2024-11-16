@@ -5,6 +5,7 @@ interface ContentItem {
   id: number;
   title: string;
   text: string;
+  type: string;
 }
 
 interface ContentProps {
@@ -25,10 +26,10 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
 
   const addContentItem = () => {
     const newId = localContentItems.length + 1;
-    const newContentItem = { id: newId, title: '', text: '' };
+    const newContentItem = { id: newId, title: '', text: '', type: 'text' };
     const updatedContentItems = [...localContentItems, newContentItem];
     setLocalContentItems(updatedContentItems);
-    const newPage= Math.ceil(updatedContentItems.length / ITEMS_PER_PAGE);
+    const newPage = Math.ceil(updatedContentItems.length / ITEMS_PER_PAGE);
     setCurrentPage(newPage);
     onUpdateUserData({ content: updatedContentItems });
   };
@@ -36,6 +37,14 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: number, field: 'title' | 'text') => {
     const updatedContentItems = localContentItems.map(item => 
       item.id === id ? { ...item, [field]: e.target.value } : item
+    );
+    setLocalContentItems(updatedContentItems);
+    onUpdateUserData({ content: updatedContentItems });
+  };
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>, id: number) => {
+    const updatedContentItems = localContentItems.map(item => 
+      item.id === id ? { ...item, type: e.target.value } : item
     );
     setLocalContentItems(updatedContentItems);
     onUpdateUserData({ content: updatedContentItems });
@@ -84,34 +93,56 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
       </div>
 
       {paginatedItems.map(contentItem => (
-      <div key={contentItem.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
-  <input
-    type="text"
-    value={contentItem.title}
-    onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
-    style={{ width: '80%', padding: '10px', marginBottom: '5px', borderRight: '1px solid grey',  }}
-    placeholder="Title"
-  />
-  <input
-    type="text"
-    value={contentItem.text}
-    onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
-    style={{ width: '80%', padding: '10px', marginBottom: '5px', borderLeft: '1px solid grey' }}
-    placeholder="Content"
-  />
-  <button
-    onClick={() => deleteContentItem(contentItem.id)}
-    style={{
-      background: 'transparent',
-      border: 'none',
-      cursor: 'pointer',
-      padding: '0',
-      marginLeft: '10px', 
-    }}
-  >
-    <Icon icon="mdi:trash" width="40"  />
-  </button>
-</div>
+        <div key={contentItem.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+          <input
+            type="text"
+            value={contentItem.title}
+            onChange={(e) => handleInputChange(e, contentItem.id, 'title')}
+            style={{ width: '80%', padding: '10px', marginBottom: '5px', borderRight: '1px solid grey' }}
+            placeholder="Title"
+          />
+          {/* Dropdown for selecting content type */}
+          <select
+            value={contentItem.type}
+            onChange={(e) => handleTypeChange(e, contentItem.id)}
+             style={{
+    padding: '10px', 
+    width: '80%',
+    fontSize: '16px', 
+    borderRadius: '5px', 
+    marginBottom: '5px',
+    appearance: 'none', 
+    backgroundColor: '#fff', 
+    textAlign: 'center',
+  }}
+          >
+            <option value="text">Text  </option>
+            <option value="image">Image  </option>
+          </select>
+          <input
+            type="text"
+            value={contentItem.text}
+            onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
+            style={{ width: '80%', padding: '10px', marginBottom: '5px', borderLeft: '1px solid grey' }}
+            placeholder={
+             contentItem.type === 'text' ? 'Text Content' :
+             contentItem.type === 'image' ? 'Content URL' :
+                'Content' 
+            }
+          />
+          <button
+            onClick={() => deleteContentItem(contentItem.id)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '0',
+              marginLeft: '10px',
+            }}
+          >
+            <Icon icon="mdi:trash" width="40" />
+          </button>
+        </div>
       ))}
 
       {/* Pagination controls */}
