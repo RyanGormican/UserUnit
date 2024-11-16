@@ -144,9 +144,9 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
     <Icon 
       icon="ri:pencil-fill" 
       style={{ marginLeft: '5px' }} 
-    />.
+    />
   </span>
-  Once edit mode is on, you can click on either of the light blue 
+  . Once edit mode is on, you can click on either of the light blue  
   <span style={{ display: 'inline-flex', alignItems: 'center' }}>
     <Icon 
       icon="mdi:arrow-top-left" 

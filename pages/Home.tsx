@@ -115,7 +115,7 @@ export default function Home() {
       const newContainer: ContainerData = {
         id: Date.now(), 
         title: 'New Container',
-        contentId: null, 
+        contentId: 1, 
         width: 50,
         height: 87,
         topLeft: { x: 0, y: 0 },
