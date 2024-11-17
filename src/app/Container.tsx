@@ -61,7 +61,7 @@ const Container: React.FC<ContainerProps> = ({
   contentItems,
   isEdit,
   onContentIdChange,
-  onUpdateUserData,
+  onUpdateUserData
 }) => {
   const contentItem = Array.isArray(contentItems)
     ? contentItems.find(content => content.id === container.contentId)

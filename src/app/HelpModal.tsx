@@ -127,6 +127,10 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
               <Icon icon="mdi:camera" width="40" style={{ marginRight: '10px', flexShrink: 0 }} />
               <span>Download a PNG of the current template layout when in Container mode.</span>
             </li>
+             <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+              <Icon icon="mdi:grid"  width="40" style={{ marginRight: '10px', flexShrink: 0 }} />
+              <span>Toggle gridlines in Container mode for better precision</span>
+            </li>
           </ul>
         ) : activeTab === 'container' ? (
           <div>
@@ -189,6 +193,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
   .
 </p>
               </li>
+
             </ul>
           </div>
         ) : activeTab === 'templateDetails' ? (
@@ -206,7 +211,13 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
                   'Template Dimensions' defines the area in which the user can construct and resize their containers. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
                 </p>
               </li>
-            </ul>
+             <li style={{ marginBottom: '20px' }}>
+                <strong>My container lines up with grid lines, yet my relative template positioning has a decimal number. Why?</strong>
+                <p>
+                Because the user can extend the entire width of the window but not the entire height of the window, the positioning percentage is not a direct translation to the positioning of the grid.
+                </p>
+              </li>
+                   </ul>
           </div>
         ) : (
           <div>No content for this tab</div> 

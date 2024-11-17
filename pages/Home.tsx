@@ -53,10 +53,14 @@ export default function Home() {
   const [isDraggingWidth, setIsDraggingWidth] = useState<boolean>(false);
   const [isDraggingHeight, setIsDraggingHeight] = useState<boolean>(false);
   const [helpModal, setHelpModal] = useState<boolean>(false); 
+  const [gridVisibility, setGridVisibility] = useState<boolean>(false); 
   const [tabSelection, setTabSelection] = useState('general');
   const toggleHelpModal = () => {
     setIsEdit(false);
     setHelpModal(prev => !prev); 
+  };
+   const toggleGridVisibility = () => {
+    setGridVisibility(prev => !prev); 
   };
   useEffect(() => {
     const storedData = localStorage.getItem('Userunitdata');
@@ -270,6 +274,7 @@ const takeSnapshot = async () => {
          <Icon  icon="mdi:import" onClick={importData} style={{height: '4.4vh',width:'2vw',  }} />
          <Icon  icon="material-symbols:download"  onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
          <Icon  icon="mdi:camera"  onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
+         <Icon icon="mdi:grid" onClick={toggleGridVisibility} style={{ height: '4.4vh', width: '2vw',color: gridVisibility ? 'lightblue' : 'black'  }} />
          <span className="flex" style={{marginLeft:'auto' }}>
          <Icon icon="ph:question-fill" onClick={toggleHelpModal} style={{ marginLeft: 'auto',height: '4.4vh',width:'2vw',  }}/>
          </span>
@@ -279,6 +284,20 @@ const takeSnapshot = async () => {
 
 {currentMode === 'Container' && (
   <div  className="container-selector" style={{ display: 'flex', height: '87vh', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+   {gridVisibility && (
+      <div
+        style={{
+          position: 'absolute',
+          top: '13vh',
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: 'linear-gradient(to right, rgba(0, 0, 0, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px)',
+          backgroundSize: '1vw 1vh', 
+          pointerEvents: 'none', 
+        }}
+      />
+    )}
     {currentTemplateId !== null && userData.template
       .filter(template => template.id === currentTemplateId) // Filter to get only the current template
       .map(template => (
