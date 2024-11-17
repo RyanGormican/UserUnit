@@ -132,7 +132,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
               <span>Toggle gridlines in Container mode for better precision</span>
             </li>
                 <li style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-              <Icon icon="mdi:magnet"  width="40" rotate="45" style={{ marginRight: '10px', flexShrink: 0 }} />
+              <Icon icon="mdi:magnet"  width="40" rotate={45} style={{ marginRight: '10px', flexShrink: 0 }} />
               <span>Toggle Snap mode in Container mode to ensures resizes move in accordance with the gridline placements (I.e whole numbers)</span>
             </li>
           </ul>

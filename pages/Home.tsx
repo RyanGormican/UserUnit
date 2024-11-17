@@ -280,7 +280,7 @@ const takeSnapshot = async () => {
          <Icon  icon="material-symbols:download"  onClick={downloadData} style={{ height: '4.4vh',width:'2vw',  }} />
          <Icon  icon="mdi:camera"  onClick={takeSnapshot} style={{ height: '4.4vh',width:'2vw',  }} />
          <Icon icon="mdi:grid" onClick={toggleGridVisibility} style={{ height: '4.4vh', width: '2vw',color: gridVisibility ? 'lightblue' : 'black'  }} />
-         <Icon icon="mdi:magnet" onClick={toggleSnapMode} rotate="45" style={{ height: '4.4vh', width: '2vw',color: snapMode ? 'lightblue' : 'black'  }} />
+         <Icon icon="mdi:magnet" onClick={toggleSnapMode} rotate={45} style={{ height: '4.4vh', width: '2vw',color: snapMode ? 'lightblue' : 'black'  }} />
          <span className="flex" style={{marginLeft:'auto' }}>
          <Icon icon="ph:question-fill" onClick={toggleHelpModal} style={{ marginLeft: 'auto',height: '4.4vh',width:'2vw',  }}/>
          </span>
