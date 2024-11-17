@@ -49,6 +49,7 @@ interface ContainerProps {
   isEdit: boolean;
   onContentIdChange: (containerId: number, newContentId: number) => void;
   onUpdateUserData: (newData: any) => void; 
+  snapMode: boolean;
 }
 
 
@@ -61,7 +62,8 @@ const Container: React.FC<ContainerProps> = ({
   contentItems,
   isEdit,
   onContentIdChange,
-  onUpdateUserData
+  onUpdateUserData,
+  snapMode
 }) => {
   const contentItem = Array.isArray(contentItems)
     ? contentItems.find(content => content.id === container.contentId)
@@ -137,12 +139,19 @@ const handleDragTopLeft = (e: React.MouseEvent) => {
     // Constrain top left to be non-negative
     const constrainedTopLeftX = Math.max(newTopLeftX, 0); 
     const constrainedTopLeftY = Math.max(newTopLeftY, 0); 
-    const finalTopLeftX = Math.min(constrainedTopLeftX, container.bottomRight.x - minWidth);
-    const finalTopLeftY = Math.min(constrainedTopLeftY, container.bottomRight.y - minHeight);
+    let finalTopLeftX = Math.min(constrainedTopLeftX, container.bottomRight.x - minWidth);
+    let finalTopLeftY = Math.min(constrainedTopLeftY, container.bottomRight.y - minHeight);
 
     // Calculate new width and height based on the final constrained top left position
-    const newWidth = Math.max(Math.min(container.bottomRight.x - finalTopLeftX, maxWidth), minWidth);
-    const newHeight = Math.max(Math.min(container.bottomRight.y - finalTopLeftY, maxHeight), minHeight);
+    let newWidth = Math.max(Math.min(container.bottomRight.x - finalTopLeftX, maxWidth), minWidth);
+    let newHeight = Math.max(Math.min(container.bottomRight.y - finalTopLeftY, maxHeight), minHeight);
+
+     if (snapMode){
+     finalTopLeftX = Math.round(finalTopLeftX);
+     finalTopLeftY = Math.round(finalTopLeftY);
+     newWidth = Math.round(newWidth);
+     newHeight = Math.round(newHeight);
+     }
 
     // Create updated container
     const updatedContainer = {
@@ -215,13 +224,18 @@ const handleDragBottomRight = (e: React.MouseEvent) => {
     const constrainedBottomRightY = Math.max(newBottomRightY, container.topLeft.y + minHeight);
 
     // Constrain the bottom right position to the maximum allowed limits
-    const finalBottomRightX = Math.min(constrainedBottomRightX, 100); // Ensure x does not exceed 100
-    const finalBottomRightY = Math.min(constrainedBottomRightY, 87); // Ensure y does not exceed 87
+    let finalBottomRightX = Math.min(constrainedBottomRightX, 100); // Ensure x does not exceed 100
+    let finalBottomRightY = Math.min(constrainedBottomRightY, 87); // Ensure y does not exceed 87
 
     // Calculate new width and height based on the constrained bottom right position
-    const newWidth = Math.max(Math.min(finalBottomRightX - container.topLeft.x, maxWidth), minWidth);
-    const newHeight = Math.max(Math.min(finalBottomRightY - container.topLeft.y, maxHeight), minHeight);
-
+    let newWidth = Math.max(Math.min(finalBottomRightX - container.topLeft.x, maxWidth), minWidth);
+    let newHeight = Math.max(Math.min(finalBottomRightY - container.topLeft.y, maxHeight), minHeight);
+     if (snapMode){
+     finalBottomRightX = Math.round(finalBottomRightX); 
+     finalBottomRightY = Math.round(finalBottomRightY); 
+     newWidth = Math.round(newWidth);
+     newHeight = Math.round(newHeight);
+     }
     // Create updated container
     const updatedContainer = {
       ...container,
