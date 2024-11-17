@@ -197,13 +197,13 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
               <li style={{ marginBottom: '20px' }}>
                 <strong>What does 'Relative Template Positioning' mean?</strong>
                 <p>
-                  'Relative Template Positioning' refers to the placement of a container within the template, defined by the x and y coordinates of its upper-left and bottom-right corners. For example, if the bottom-right coordinates are (63.00, 52.41), it means the coordinate is 63.00% of the width and 52.41% of the height of the template dimensions.
+                  'Relative Template Positioning' refers to the placement of a container within the template, defined by the x and y coordinates of its upper-left and bottom-right corners. For example, if the bottom-right coordinates are (63.00, 52.41), it means the coordinate is 63.00% of the width  and 52.41% of the height of the template dimensions starting from the top left corner of the template dimensions.
                 </p>
               </li>
               <li style={{ marginBottom: '20px' }}>
                 <strong>What does 'Template Dimensions' indicate?</strong>
                 <p>
-                  'Template Dimensions' defines the area in which the user can construct and resize their containers. The dimensions prevent construction on and above the buttons along with extending past the browser window.
+                  'Template Dimensions' defines the area in which the user can construct and resize their containers. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
                 </p>
               </li>
             </ul>

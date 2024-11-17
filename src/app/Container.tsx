@@ -354,27 +354,28 @@ const renderContent = contentItem ? (
         margin: 0,
       }}
     >
-      {isEdit && (
-        <select
-          value={container.contentId}
-          onChange={(e) => onContentIdChange(container.id, Number(e.target.value))} // Correctly update contentId
-          style={{
-            width: '25%',
-            marginTop: '5px',
-            position: 'absolute',
-            zIndex: 11,
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        >
-          {Array.isArray(contentItems) && contentItems.map(content => (
-            <option key={content.id} value={content.id}>
-              {content.title || 'Untitled'}
-            </option>
-          ))}
-        </select>
-      )}
+ {isEdit && (
+  <select
+    value={container.contentId}
+    onChange={(e) => onContentIdChange(container.id, Number(e.target.value))} 
+    style={{
+      width: '25%',
+      marginTop: '5px',
+      position: 'absolute',
+      zIndex: 11,
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    }}
+  >
+    <option value="">Select content</option> 
+    {Array.isArray(contentItems) && contentItems.map(content => (
+      <option key={content.id} value={content.id}>
+        {content.title || 'Untitled'}
+      </option>
+    ))}
+  </select>
+)}
 
  
 

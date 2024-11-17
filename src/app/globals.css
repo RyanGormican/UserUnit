@@ -45,6 +45,9 @@ body {
     max-height: 4.4vh;
 }
 
+html, body {
+  overflow: hidden;
+}
 
 /* HelpModal styles */
 .help-modal {
