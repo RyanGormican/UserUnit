@@ -19,6 +19,8 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
   const [localContentItems, setLocalContentItems] = useState<ContentItem[]>(Array.isArray(contentItems) ? contentItems : []);
   const [searchTerm, setSearchTerm] = useState<string>(''); 
   const [currentPage, setCurrentPage] = useState<number>(1); 
+  const [firstIndex, setFirstIndex] = useState<number>(1); 
+  const [secondIndex, setSecondIndex] = useState<number>(1);  
 
   useEffect(() => {
     setLocalContentItems(Array.isArray(contentItems) ? contentItems : []);
@@ -74,6 +76,25 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
     }
   }, [filteredContentItems, totalPages, currentPage]);
 
+  const handleSwap = () => {
+
+  const Idx1 = firstIndex - 1;
+  const Idx2 = secondIndex - 1;
+
+  // Check if the indices are valid and not the same
+  if (Idx1 !== Idx2 && Idx1 >= 0 && Idx2 >= 0 && Idx1 < localContentItems.length && Idx2 < localContentItems.length) {
+    // Swap the content items
+    const updatedContentItems = [...localContentItems];
+    [updatedContentItems[Idx1], updatedContentItems[Idx2]] = [updatedContentItems[Idx2], updatedContentItems[Idx1]];
+
+    // Update state and propagate changes
+    setLocalContentItems(updatedContentItems);
+    onUpdateUserData({ content: updatedContentItems });
+  }
+};
+
+
+
   return (
     <div style={{ height: '100%', backgroundColor: '#e0e0e0', padding: '20px' }}>
       <h2 style={{ fontSize: '2vh' }}>Manage Content Items</h2>
@@ -90,7 +111,28 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
             Add New Content Item
           </button>
         )}
+            {/* Swap Inputs */}
+     
+        <input
+          type="number"
+          min="1"
+          max={localContentItems.length}
+          value={firstIndex}
+          onChange={(e) => setFirstIndex(Number(e.target.value))}
+          style={{ borderRight: '1px solid grey', padding: '10px' }}
+        />
+        <input
+          type="number"
+          min="1"
+          max={localContentItems.length}
+          value={secondIndex}
+          onChange={(e) => setSecondIndex(Number(e.target.value))}
+          style={{  padding: '10px' }}
+        />
+        <button onClick={handleSwap}  style={{ marginTop: '10px', padding: '10px', backgroundColor: 'lightblue' }}>Swap</button>
       </div>
+
+   
 
       {paginatedItems.map(contentItem => (
         <div key={contentItem.id} style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
@@ -124,11 +166,7 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
             value={contentItem.text}
             onChange={(e) => handleInputChange(e, contentItem.id, 'text')}
             style={{ width: '80%', padding: '10px', marginBottom: '5px', borderLeft: '1px solid grey' }}
-            placeholder={
-             contentItem.type === 'text' ? 'Text Content' :
-             contentItem.type === 'image' ? 'Content URL' :
-                'Content' 
-            }
+            placeholder={contentItem.type === 'text' ? 'Text Content' : 'Content URL'}
           />
           <button
             onClick={() => deleteContentItem(contentItem.id)}

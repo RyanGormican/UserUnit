@@ -24,12 +24,14 @@ interface TemplateProps {
   setCurrentTemplateId: (id: number) => void;
 }
 
-const ITEMS_PER_PAGE = 10; // Number of items per page for pagination
+const ITEMS_PER_PAGE = 10;
 
 const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, setCurrentTemplateId }) => {
   const [localTemplates, setLocalTemplates] = useState<TemplateItem[]>(templateItems);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Add state for search term
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [firstIndex, setFirstIndex] = useState<number>(1);
+  const [secondIndex, setSecondIndex] = useState<number>(1);
 
   useEffect(() => {
     setLocalTemplates(templateItems);
@@ -44,11 +46,6 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
     onUpdateUserData({ template: updatedTemplates });
   };
 
-  // Generate a unique ID for containers
-  const generateContainerId = () => {
-    return Date.now() + Math.random(); // Combine timestamp and random number for uniqueness
-  };
-
   // Copy template item
   const copyTemplateItem = (id: number) => {
     const templateToCopy = localTemplates.find(template => template.id === id);
@@ -60,7 +57,7 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
       name: `Copy of ${templateToCopy.name}`,
       containers: templateToCopy.containers.map(container => ({
         ...container,
-        id: generateContainerId(),
+        id: Date.now() + Math.random(),
       })),
     };
 
@@ -85,6 +82,7 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
     if (updatedTemplates.length === 1) {
       setCurrentTemplateId(newId);
     }
+
     const totalPages = Math.ceil(updatedTemplates.length / ITEMS_PER_PAGE);
     setCurrentPage(totalPages);
   };
@@ -94,6 +92,7 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
     const updatedTemplates = localTemplates.filter(t => t.id !== id);
     setLocalTemplates(updatedTemplates);
     onUpdateUserData({ template: updatedTemplates });
+
     const totalPages = Math.ceil(updatedTemplates.length / ITEMS_PER_PAGE);
     setCurrentPage(totalPages);
   };
@@ -111,26 +110,56 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
     setCurrentPage(newPage);
   };
 
+  // Handle swap logic for templates
+  const handleSwap = () => {
+    const idx1 = firstIndex - 1;
+    const idx2 = secondIndex - 1;
+
+    if (idx1 !== idx2 && idx1 >= 0 && idx2 >= 0 && idx1 < localTemplates.length && idx2 < localTemplates.length) {
+      const updatedTemplates = [...localTemplates];
+      [updatedTemplates[idx1], updatedTemplates[idx2]] = [updatedTemplates[idx2], updatedTemplates[idx1]];
+
+      setLocalTemplates(updatedTemplates);
+      onUpdateUserData({ template: updatedTemplates });
+    }
+  };
+
   return (
     <div style={{ height: '100%', backgroundColor: '#e0e0e0', padding: '20px' }}>
-       <h2 style={{ fontSize: '2vh' }}>Manage Templates</h2>
-        <div>
-      {/* Search Input */}
+      <h2 style={{ fontSize: '2vh' }}>Manage Templates</h2>
       <div>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)} // Update search term on change
-           placeholder="Search by title"
+          placeholder="Search by title"
           style={{ width: '10%', padding: '10px', marginBottom: '10px' }}
         />
- <button onClick={addTemplateItem} style={{ marginTop: '10px', padding: '10px', backgroundColor: 'lightblue' }}>
-        Add New Template
-      </button>
+        <button onClick={addTemplateItem} style={{ marginTop: '10px', padding: '10px', backgroundColor: 'lightblue' }}>
+          Add New Template
+        </button>
+
+        <input
+          type="number"
+          min="1"
+          max={localTemplates.length}
+          value={firstIndex}
+          onChange={(e) => setFirstIndex(Number(e.target.value))}
+          style={{ borderRight: '1px solid grey', padding: '10px' }}
+        />
+        <input
+          type="number"
+          min="1"
+          max={localTemplates.length}
+          value={secondIndex}
+          onChange={(e) => setSecondIndex(Number(e.target.value))}
+          style={{ padding: '10px' }}
+        />
+        <button onClick={handleSwap} style={{ marginTop: '10px', padding: '10px', backgroundColor: 'lightblue' }}>
+          Swap
+        </button>
       </div>
-      
-     
-      </div>
+
       {paginatedTemplates.map(template => (
         <div key={template.id} style={{ marginBottom: '10px' }}>
           <div className="flex" style={{ display: 'flex', alignItems: 'center' }}>
