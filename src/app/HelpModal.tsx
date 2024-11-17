@@ -202,19 +202,19 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
               <li style={{ marginBottom: '20px' }}>
                 <strong>What does 'Relative Template Positioning' mean?</strong>
                 <p>
-                  'Relative Template Positioning' refers to the placement of a container within the template, defined by the x and y coordinates of its upper-left and bottom-right corners. For example, if the bottom-right coordinates are (63.00, 52.41), it means the coordinate is 63.00% of the width  and 52.41% of the height of the template dimensions starting from the top left corner of the template dimensions.
+                  'Relative Template Positioning' refers to the placement of a container within the template, defined by the x and y coordinates of its upper-left and bottom-right corners. For example, if the bottom-right coordinates are (63.00, 52.41), it means the corner is at 63.00% of the width  and 52.41% of the height for the template dimensions.
                 </p>
               </li>
               <li style={{ marginBottom: '20px' }}>
                 <strong>What does 'Template Dimensions' indicate?</strong>
                 <p>
-                  'Template Dimensions' defines the area in which the user can construct and resize their containers. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
+                  'Template Dimensions' defines the area in which the user can construct and resize their containers. In relative positioning, (0,0) describes the top left corner and (100,100) describes the bottom right corner. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
                 </p>
               </li>
              <li style={{ marginBottom: '20px' }}>
                 <strong>My container lines up with grid lines, yet my relative template positioning has a decimal number. Why?</strong>
                 <p>
-                Because the user can extend the entire width of the window but not the entire height of the window, the positioning percentage is not a direct translation to the positioning of the grid.
+                Because the user can extend containers to the entire width of the window but not the entire height of the window, the positioning percentage is not a direct translation to the positioning of the grid.
                 </p>
               </li>
                    </ul>
