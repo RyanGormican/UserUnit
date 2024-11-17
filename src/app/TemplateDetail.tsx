@@ -94,8 +94,9 @@ const TemplateDetail: React.FC<TemplateProps> = ({
                {matchingContent ? matchingContent.type.charAt(0).toUpperCase() + matchingContent.type.slice(1) : 'No Content Selected'}
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
-                    Top Left: ({container.topLeft.x.toFixed(2) }, {(container.topLeft.y.toFixed(2) * (100/87)).toFixed(2)}) | 
-                    Bottom Right: ({container.bottomRight.x.toFixed(2)}, { (container.bottomRight.y *(100/87)).toFixed(2)})
+            Top Left: ({container.topLeft.x.toFixed(2)}, {(parseFloat(container.topLeft.y.toFixed(2)) * (100/87)).toFixed(2)}) | 
+Bottom Right: ({container.bottomRight.x.toFixed(2)}, {(parseFloat(container.bottomRight.y.toFixed(2)) * (100/87)).toFixed(2)})
+
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
                     <input
