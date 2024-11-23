@@ -350,10 +350,24 @@ const renderContent = contentItem ? (
       alt="Content"
       style={{ width: `${container.width}vw`, height: `${container.height}vh` }}
     />
+  ) : contentItem.type === 'youtube' && contentItem.text ? (
+    <div style={{ width: `${container.width}vw`, height: `${container.height}vh` }}>
+      <iframe
+        width="100%"
+        height="100%"
+        src={`https://www.youtube.com/embed/${contentItem.text.split('v=')[1]}`}
+        title="YouTube Video"
+        frameBorder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+    </div>
   ) : null
 ) : (
   <p>No content available</p>
 );
+
+
   return (
     <div
       style={{

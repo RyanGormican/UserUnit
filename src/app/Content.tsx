@@ -162,6 +162,7 @@ return (
           >
             <option value="text">Text</option>
             <option value="image">Image</option>
+            <option value="youtube">Youtube Video</option>
           </select>
           <input
             type="text"

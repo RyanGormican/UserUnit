@@ -135,17 +135,18 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
           placeholder="Search by title"
           style={{ width: '10%', padding: '10px', marginBottom: '10px' }}
         />
+              {searchTerm.length === 0 && (
         <button onClick={addTemplateItem} style={{ marginTop: '10px', padding: '10px', backgroundColor: 'lightblue' }}>
           Add New Template
         </button>
-
+        )}
         <input
           type="number"
           min="1"
           max={localTemplates.length}
           value={firstIndex}
           onChange={(e) => setFirstIndex(Number(e.target.value))}
-          style={{ borderRight: '1px solid grey', padding: '10px' }}
+          style={{ borderRight: '1px solid grey', borderLeft: '1px solid grey',padding: '10px' }}
         />
         <input
           type="number"

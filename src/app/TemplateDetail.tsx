@@ -9,14 +9,14 @@ interface ContainerData {
   height: number;
   topLeft: { x: number; y: number };
   bottomRight: { x: number; y: number };
-  color?: string; 
+  color?: string;
 }
 
 interface ContentItem {
   id: number;
   title: string;
   text: string;
-  type: string;  
+  type: string;
 }
 
 interface TemplateItem {
@@ -30,7 +30,7 @@ interface TemplateProps {
   onUpdateUserData: (newData: Partial<{ template: TemplateItem[] }>) => void;
   setCurrentTemplateId: (id: number) => void;
   templateId: number;
-  contentItems: ContentItem[]; 
+  contentItems: ContentItem[];
 }
 
 const TemplateDetail: React.FC<TemplateProps> = ({
@@ -40,25 +40,34 @@ const TemplateDetail: React.FC<TemplateProps> = ({
   templateId,
   contentItems
 }) => {
-  const [currentTemplate, setCurrentTemplate] = useState<TemplateItem | null>(null);
+  const [localTemplate, setLocalTemplate] = useState<TemplateItem | null>(null);
 
   useEffect(() => {
     const selectedTemplate = templateItems.find(item => item.id === templateId);
-    setCurrentTemplate(selectedTemplate || null);
+    setLocalTemplate(selectedTemplate || null);
   }, [templateId, templateItems]);
 
-  if (!currentTemplate) {
+
+  if (!localTemplate) {
     return <div>Template not found.</div>;
   }
 
   // Handle color change for a container
   const handleColorChange = (containerId: number, color: string) => {
-    const updatedTemplate = { ...currentTemplate };
-    const updatedContainers = updatedTemplate.containers.map(container => 
+    if (!localTemplate) return;
+
+    const updatedTemplate = { ...localTemplate };
+    const updatedContainers = updatedTemplate.containers.map(container =>
       container.id === containerId ? { ...container, color } : container
     );
     updatedTemplate.containers = updatedContainers;
-    onUpdateUserData({ template: [updatedTemplate] });
+
+
+    setLocalTemplate(updatedTemplate);
+
+    onUpdateUserData({ template: templateItems.map(item =>
+      item.id === templateId ? updatedTemplate : item
+    ) });
   };
 
   return (
@@ -68,16 +77,15 @@ const TemplateDetail: React.FC<TemplateProps> = ({
       {/* Render container details */}
       <div>
         <h3>Containers</h3>
-        {currentTemplate.containers.length > 0 ? (
+        {localTemplate.containers.length > 0 ? (
           <div style={{ display: 'table', width: '100%' }}>
             <div style={{ display: 'table-row', fontWeight: 'bold' }}>
               <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content of Container</div>
-              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content Type</div> {/* New column header */}
+              <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Content Type</div>
               <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Relative Template Positioning</div>
               <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>Color</div>
             </div>
-            {currentTemplate.containers.map(container => {
-              // Find the matching contentItem by contentId
+            {localTemplate.containers.map(container => {
               const matchingContent = contentItems.find(content => content.id === container.contentId);
               return (
                 <div key={container.id} style={{ display: 'table-row' }}>
@@ -91,12 +99,11 @@ const TemplateDetail: React.FC<TemplateProps> = ({
                     )}
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
-               {matchingContent ? matchingContent.type.charAt(0).toUpperCase() + matchingContent.type.slice(1) : 'No Content Selected'}
+                    {matchingContent ? matchingContent.type.charAt(0).toUpperCase() + matchingContent.type.slice(1) : 'No Content Selected'}
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
-            Top Left: ({container.topLeft.x.toFixed(2)}, {(parseFloat(container.topLeft.y.toFixed(2)) * (100/87)).toFixed(2)}) | 
-Bottom Right: ({container.bottomRight.x.toFixed(2)}, {(parseFloat(container.bottomRight.y.toFixed(2)) * (100/87)).toFixed(2)})
-
+                    Top Left: ({container.topLeft.x.toFixed(2)}, {(parseFloat(container.topLeft.y.toFixed(2)) * (100 / 87)).toFixed(2)}) | 
+                    Bottom Right: ({container.bottomRight.x.toFixed(2)}, {(parseFloat(container.bottomRight.y.toFixed(2)) * (100 / 87)).toFixed(2)})
                   </div>
                   <div style={{ display: 'table-cell', padding: '8px', border: '1px solid #ccc' }}>
                     <input
