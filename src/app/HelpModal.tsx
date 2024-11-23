@@ -212,7 +212,7 @@ const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose, selectedTab}) =>
               <li style={{ marginBottom: '20px' }}>
                 <strong>What does 'Template Dimensions' indicate?</strong>
                 <p>
-                  'Template Dimensions' defines the area in which the user can construct and resize their containers. In relative positioning, (0,0) describes the top left corner and (100,100) describes the bottom right corner. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
+                  'Template Dimensions' defines the area in which the user can construct and resize their containers. In relative positioning, (0.00,0.00) describes the top left corner and (100.00,100.00) describes the bottom right corner. The dimensions prevent construction on and above the buttons row along with extending past the browser window.
                 </p>
               </li>
              <li style={{ marginBottom: '20px' }}>

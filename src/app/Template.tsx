@@ -160,41 +160,50 @@ const Template: React.FC<TemplateProps> = ({ templateItems, onUpdateUserData, se
         </button>
       </div>
 
-      {paginatedTemplates.map(template => (
-        <div key={template.id} style={{ marginBottom: '10px' }}>
-          <div className="flex" style={{ display: 'flex', alignItems: 'center' }}>
-            {/* Copy icon */}
-            <Icon
-              icon="tabler:copy"
-              width="40"
-              onClick={() => copyTemplateItem(template.id)}
-              style={{ cursor: 'pointer', marginRight: '10px' }}
-            />
+   {paginatedTemplates.map((template) => {
 
-            {/* Template name input */}
-            <input
-              type="text"
-              value={template.name}
-              onChange={(e) => handleNameChange(template.id, e.target.value)}
-              style={{ padding: '10px', width: '99vw' }}
-            />
+  const originalIndex = localTemplates.findIndex((item) => item.id === template.id) + 1; 
 
-            {/* Delete (trash) icon */}
-            <button
-              onClick={() => deleteTemplateItem(template.id)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                padding: '0',
-                marginLeft: '10px',
-              }}
-            >
-              <Icon icon="mdi:trash" width="40" />
-            </button>
-          </div>
+  return (
+    <div key={template.id} style={{ marginBottom: '10px' }}>
+      <div className="flex" style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ width: '2.5%', padding: '10px', textAlign: 'center' }}>
+          {originalIndex}
         </div>
-      ))}
+
+        {/* Copy icon */}
+        <Icon
+          icon="tabler:copy"
+          width="40"
+          onClick={() => copyTemplateItem(template.id)}
+          style={{ cursor: 'pointer', marginRight: '10px' }}
+        />
+
+        {/* Template name input */}
+        <input
+          type="text"
+          value={template.name}
+          onChange={(e) => handleNameChange(template.id, e.target.value)}
+          style={{ padding: '10px', width: '99vw' }}
+        />
+
+        <button
+          onClick={() => deleteTemplateItem(template.id)}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '0',
+            marginLeft: '10px',
+          }}
+        >
+          <Icon icon="mdi:trash" width="40" />
+        </button>
+      </div>
+    </div>
+  );
+})}
+
 
       {/* Pagination controls */}
       {totalPages > 1 && (
