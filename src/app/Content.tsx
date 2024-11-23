@@ -27,7 +27,7 @@ const Content: React.FC<ContentProps> = ({ contentItems, onUpdateUserData }) => 
   }, [contentItems]);
 
   const addContentItem = () => {
-    const newId = localContentItems.length + 1;
+    const newId = Date.now();
     const newContentItem = { id: newId, title: '', text: '', type: 'text' };
     const updatedContentItems = [...localContentItems, newContentItem];
     setLocalContentItems(updatedContentItems);
